@@ -131,8 +131,6 @@ public class UserDAO extends DaoBase{
 			}
 		}
 	}
-<<<<<<< HEAD
-=======
 	
 	// login by phone
 	@Test
@@ -177,6 +175,7 @@ public class UserDAO extends DaoBase{
 		ResultSet rs = null;
 		
 		String username = "heyulin";
+		String password = "111111";
 		String mail = "yolanehe@163.com";
 		
 		try {
@@ -187,17 +186,22 @@ public class UserDAO extends DaoBase{
 			rs = pStatement.executeQuery();
 			
 			if(rs.next()) {
-				sql = "update user set mail=? where userID=?";
-				pStatement = conn.prepareStatement(sql);
-				pStatement.setString(1, mail);
-				pStatement.setString(2, username);
-				
-				int row = pStatement.executeUpdate();
-				if(row > 0) {
-					System.out.println("update mail successfully");
+				if(rs.getString("password").equals(password)) {
+					sql = "update user set mail=? where userID=?";
+					pStatement = conn.prepareStatement(sql);
+					pStatement.setString(1, mail);
+					pStatement.setString(2, username);
+					
+					int row = pStatement.executeUpdate();
+					if(row > 0) {
+						System.out.println("update mail successfully");
+					}
+					else {
+						System.out.println("update mail failed");
+					}	
 				}
 				else {
-					System.out.println("update mail failed");
+					System.out.println("password Error!!!");
 				}
 			}
 			else {
@@ -221,6 +225,7 @@ public class UserDAO extends DaoBase{
 		ResultSet rs = null;
 		
 		String username = "heyulin";
+		String password = "111111";
 		String phone = "15113158871";
 		
 		try {
@@ -231,17 +236,22 @@ public class UserDAO extends DaoBase{
 			rs = pStatement.executeQuery();
 			
 			if(rs.next()) {
-				sql = "update user set phone=? where userID=?";
-				pStatement = conn.prepareStatement(sql);
-				pStatement.setString(1, phone);
-				pStatement.setString(2, username);
-				
-				int row = pStatement.executeUpdate();
-				if(row > 0) {
-					System.out.println("update phone successfully");
+				if(rs.getString("password").equals(password)) {
+					sql = "update user set phone=? where userID=?";
+					pStatement = conn.prepareStatement(sql);
+					pStatement.setString(1, phone);
+					pStatement.setString(2, username);
+					
+					int row = pStatement.executeUpdate();
+					if(row > 0) {
+						System.out.println("update phone successfully");
+					}
+					else {
+						System.out.println("update phone failed");
+					}
 				}
 				else {
-					System.out.println("update phone failed");
+					System.out.println("password Error!!!");
 				}
 			}
 			else {
@@ -257,5 +267,55 @@ public class UserDAO extends DaoBase{
 			}
 		}
 	}
->>>>>>> 8c352540d483b0de89610ed06f5ead900ad16145
+	
+	@Test
+	public void updatePassword() {
+		Connection conn = null;
+		PreparedStatement pStatement = null;
+		ResultSet rs = null;
+		
+		String username = "chenwanjing";
+		String newPassword = "222222";
+		String oldPassword = "asdfghj";
+		
+		try {
+			conn = getConnection();
+			String sql = "select * from user where userID=?";
+			pStatement = conn.prepareStatement(sql);
+			pStatement.setString(1, username);
+			rs = pStatement.executeQuery();
+			
+			if(rs.next()) {
+				if(rs.getString("password").equals(oldPassword)) {
+					sql = "update user set password=? where userID=?";
+					pStatement = conn.prepareStatement(sql);
+					pStatement.setString(1, newPassword);
+					pStatement.setString(2, username);
+					
+					int row = pStatement.executeUpdate();
+					if(row > 0) {
+						System.out.println("update password successfully");
+					}
+					else {
+						System.out.println("update password failed");
+					}
+				}
+				else {
+					System.out.println("password Error!!!");
+				}
+			}
+			else {
+				System.out.println("no users named " + username);
+			}
+		}catch(Exception sqlException) {
+			sqlException.printStackTrace();
+		}finally {
+			try {
+				System.out.println("testtesttest");
+				release(conn, pStatement, rs);
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
 }
