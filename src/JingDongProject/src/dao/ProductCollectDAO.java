@@ -2,6 +2,8 @@ package dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
 import org.junit.Test;
 
 import domain.ProductCollect;
@@ -42,7 +44,7 @@ public class ProductCollectDAO extends DaoBase{
 			connection=getConnection();
 			String sql="delete from productcollect where pcollectID=?";
 			pStatement=connection.prepareStatement(sql);
-			pStatement.setLong(1, 3);
+			pStatement.setLong(1, 7);
 			int rows=pStatement.executeUpdate();
 			if(rows>0) {
 				System.out.println("delete successfully!");
@@ -54,6 +56,31 @@ public class ProductCollectDAO extends DaoBase{
 			throw new RuntimeException(e);
 		} finally {
 			release(connection, pStatement, null);
+		}
+	}
+	
+	@Test
+	public void queryByUserID() {
+		Connection connection=null;
+		PreparedStatement pStatement=null;
+		ResultSet resultset=null;		
+		
+		ProductCollect pCollect=new ProductCollect();
+		try {
+			connection=getConnection();
+			String sql="select * from productcollect where userID=?";
+			pStatement=connection.prepareStatement(sql);
+			pStatement.setString(1, "smh");
+			resultset=pStatement.executeQuery();
+			while(resultset.next()) {
+				pCollect.setPcollectID(resultset.getLong(1));
+				pCollect.setUserID(resultset.getString(2));
+				System.out.println(pCollect.getPcollectID()+"----"+pCollect.getUserID());
+			}				
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			release(connection, pStatement, resultset);
 		}
 	}
 }
