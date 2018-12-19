@@ -65,9 +65,10 @@ public class CommentDAO extends DaoBase{
 		Long productID=(long)1;
 		try {
 			connection=getConnection();
-			String sql="select * from comment where productID=?";
+			String sql="select * from comment where productID=? and ispassed=?";
 			pStatement=connection.prepareStatement(sql);
 			pStatement.setLong(1, productID);
+			pStatement.setString(2, "Y");
 			resultset=pStatement.executeQuery();
 			
 			System.out.println("product("+productID+")'s all comments:");
@@ -92,8 +93,7 @@ public class CommentDAO extends DaoBase{
 				System.out.print(userID+"\t");
 				System.out.print(comment.getCommentTime()+"\t");
 				System.out.print(comment.getContent()+"\t");
-				System.out.println(comment.getScore()+"星");
-				
+				System.out.println(comment.getScore()+"星");				
 			}				
 		} catch (Exception e) {
 			e.printStackTrace();
