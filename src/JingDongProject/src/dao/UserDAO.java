@@ -175,7 +175,7 @@ public class UserDAO extends DaoBase{
 		ResultSet rs = null;
 		
 		String username = "heyulin";
-		String mail = "294813616@qq.com";
+		String mail = "yolanehe@163.com";
 		
 		try {
 			conn = getConnection();
@@ -196,6 +196,50 @@ public class UserDAO extends DaoBase{
 				}
 				else {
 					System.out.println("update mail failed");
+				}
+			}
+			else {
+				System.out.println("no users named " + username);
+			}
+		}catch(Exception sqlException) {
+			sqlException.printStackTrace();
+		}finally {
+			try {
+				release(conn, pStatement, rs);
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	@Test
+	public void updatePhone() {
+		Connection conn = null;
+		PreparedStatement pStatement = null;
+		ResultSet rs = null;
+		
+		String username = "heyulin";
+		String phone = "15113158871";
+		
+		try {
+			conn = getConnection();
+			String sql = "select * from user where userID=?";
+			pStatement = conn.prepareStatement(sql);
+			pStatement.setString(1, username);
+			rs = pStatement.executeQuery();
+			
+			if(rs.next()) {
+				sql = "update user set phone=? where userID=?";
+				pStatement = conn.prepareStatement(sql);
+				pStatement.setString(1, phone);
+				pStatement.setString(2, username);
+				
+				int row = pStatement.executeUpdate();
+				if(row > 0) {
+					System.out.println("update phone successfully");
+				}
+				else {
+					System.out.println("update phone failed");
 				}
 			}
 			else {
