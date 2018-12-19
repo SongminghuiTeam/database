@@ -52,10 +52,11 @@ public class StoreDAO extends DaoBase {
 		Connection connection = getConnection();
 		String sql = "select * from store where userID='宋明惠'";
 		PreparedStatement pStatement = null;
+		ResultSet resultSet=null;
 		try {
 			pStatement = connection.prepareStatement(sql);
 			// pStatement.setString(1, "宋明惠");
-			ResultSet resultSet = pStatement.executeQuery();
+			resultSet = pStatement.executeQuery();
 			if (resultSet.next()) {
 				store.setStoreID(resultSet.getLong(1));
 				store.setUserID(resultSet.getString(2));
@@ -68,7 +69,7 @@ public class StoreDAO extends DaoBase {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		release(connection, pStatement, resultSet);
 	}
 
 	/**
@@ -80,10 +81,11 @@ public class StoreDAO extends DaoBase {
 		Connection connection = getConnection();
 		String sql = "select * from store where storeName=?";
 		PreparedStatement pStatement = null;
+		ResultSet resultSet = null;
 		try {
 			pStatement = connection.prepareStatement(sql);
 			pStatement.setString(1, "宋明惠的店铺");
-			ResultSet resultSet = pStatement.executeQuery();
+			resultSet = pStatement.executeQuery();
 			if (resultSet.next()) {
 				store.setStoreID(resultSet.getLong(1));
 				store.setUserID(resultSet.getString(2));
@@ -93,10 +95,10 @@ public class StoreDAO extends DaoBase {
 						+ store.getScore());
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
-
+		release(connection, pStatement, resultSet);
 	}
 
 	/**
@@ -105,7 +107,6 @@ public class StoreDAO extends DaoBase {
 
 	@Test
 	public void updateStoreName() {
-		Store store = new Store();
 		Connection connection = getConnection();
 		String sql = "update store set storeName=? where storeID=?";
 		PreparedStatement pStatement = null;
@@ -118,9 +119,9 @@ public class StoreDAO extends DaoBase {
 				System.out.println("update storeName success");
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		release(connection, pStatement, null);
 	}
 
 	/**
@@ -128,7 +129,6 @@ public class StoreDAO extends DaoBase {
 	 */
 	@Test
 	public void updateScore() {
-		Store store = new Store();
 		Connection connection = getConnection();
 		String sql = "update store set score=? where storeID=?";
 		PreparedStatement pStatement = null;
@@ -141,9 +141,9 @@ public class StoreDAO extends DaoBase {
 				System.out.println("update score success");
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		release(connection, pStatement, null);
 	}
 
 }
