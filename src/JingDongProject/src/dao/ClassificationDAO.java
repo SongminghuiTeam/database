@@ -157,13 +157,10 @@ public class ClassificationDAO extends DaoBase{
 	}
 	
 	//查
-	@org.junit.Test
-	public void search() {
+	public void search(String classificationName) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		
-		String classificationName = "空调";
 
 		ClassificationDAO clDAO = new ClassificationDAO();
 		Long classificationID = clDAO.queryClassificationID(classificationName);
@@ -178,10 +175,10 @@ public class ClassificationDAO extends DaoBase{
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setLong(1, classificationID);		
 			
-			System.out.println(classificationName + "：");
-			rs = pstmt.executeQuery();;
+			System.out.println("\t" + classificationName + "：");
+			rs = pstmt.executeQuery();
 			while(rs.next()) {
-				System.out.println("\t" + rs.getString(1));
+				System.out.println("\t\t" + rs.getString(1));
 			}
 			this.release(conn, pstmt, rs);
 			

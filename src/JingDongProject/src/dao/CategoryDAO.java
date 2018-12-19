@@ -38,7 +38,7 @@ public class CategoryDAO extends DaoBase{
 		}
 	}
 	
-	//ͨ通过CategoryName查找CategoryID
+	//ͨ通过categoryName查找categoryID
 	public Long queryCategoryID(String categoryName) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;	
@@ -97,6 +97,41 @@ public class CategoryDAO extends DaoBase{
 			}
 			
 			this.release(conn, pstmt, null);			
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	//查
+	@org.junit.Test
+	public void search() {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		String categoryName = "电器";
+		CategoryDAO caDAO = new CategoryDAO();
+		ClassificationDAO cl = new ClassificationDAO();
+		Long categoryID = caDAO.queryCategoryID(categoryName);
+		
+		if(categoryID == -1) {			
+			System.out.println("Search failed");
+			return;
+		}
+		
+		try {
+			conn = this.getConnection();
+			String sql = "select classificationName from Classification where categoryID=?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setLong(1, categoryID);
+			
+			System.out.println(categoryName + "：");
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				String classificationName = rs.getString(1);
+				cl.search(classificationName);
+			}
+			
 		}catch(SQLException e) {
 			e.printStackTrace();
 		}
