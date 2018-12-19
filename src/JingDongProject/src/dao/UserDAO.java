@@ -19,7 +19,7 @@ public class UserDAO extends DaoBase{
 		PreparedStatement pStatement = null;
 		ResultSet rSet = null;
 		
-		User user = new User("chenwanjing","13128662811","chenwanjing@163.com","222222");
+		User user = new User("songminghui","13269016600","","6543321");
 		
 		String userID = user.getUserID();
 		String mail = user.getMail();
@@ -55,9 +55,9 @@ public class UserDAO extends DaoBase{
 		}
 	}
 	
-	// login by username
+	// login by userID
 	@org.junit.Test
-	public void searchByUsername() {
+	public void searchByUserID() {
 		Connection conn = null;
 		PreparedStatement pStatement = null;
 		ResultSet rs = null;
@@ -79,6 +79,47 @@ public class UserDAO extends DaoBase{
 			}
 			else {
 				System.out.println("login Error");
+			}
+		}catch(Exception sqlException) {
+			sqlException.printStackTrace();
+		}finally {
+			try {
+				release(conn, pStatement, rs);
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	// login by mail
+	@org.junit.Test
+	public void searchByMail() {
+		Connection conn = null;
+		PreparedStatement pStatement = null;
+		ResultSet rs = null;
+		
+		String mail = "";
+		String truePassword = "654321";
+		String falsePassword = "111111";
+		
+		try {
+			if(mail.equals("")) {
+				System.out.println("current user's mail information is empty,login error");
+			}
+			else {
+				conn = getConnection();
+				String sql = "select * from user where mail=" + "'" + mail + "'" + " and password=" + "'" + truePassword + "'";
+				pStatement = conn.prepareStatement(sql);
+				rs = pStatement.executeQuery();
+				
+				if(rs.next()) {
+					System.out.println("login Success");
+					System.out.println("login Info");
+					System.out.println("username:" + rs.getString("userID") + " phone:" + rs.getString("phone") + " mail:" + rs.getString("mail") + " password:" + rs.getString("password"));
+				}
+				else {
+					System.out.println("login Error");
+				}
 			}
 		}catch(Exception sqlException) {
 			sqlException.printStackTrace();
