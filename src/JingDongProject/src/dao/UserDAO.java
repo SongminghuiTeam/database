@@ -131,4 +131,40 @@ public class UserDAO extends DaoBase{
 			}
 		}
 	}
+	
+	// login by phone
+	@Test
+	public void searchByPhone() {
+		Connection conn = null;
+		PreparedStatement pStatement = null;
+		ResultSet rs = null;
+		
+		String phone = "13269016600";
+		String truePassword = "654321";
+		String falsePassword = "111111";
+		
+		try {
+			conn = getConnection();
+			String sql = "select * from user where phone=" + "'" + phone + "'" + " and password=" + "'" + truePassword + "'";
+			pStatement = conn.prepareStatement(sql);
+			rs = pStatement.executeQuery();
+			
+			if(rs.next()) {
+				System.out.println("login Success");
+				System.out.println("login Info");
+				System.out.println("username:" + rs.getString("userID") + " phone:" + rs.getString("phone") + " mail:" + rs.getString("mail") + " password:" + rs.getString("password"));
+			}
+			else {
+				System.out.println("login Error");
+			}
+		}catch(Exception sqlException) {
+			sqlException.printStackTrace();
+		}finally {
+			try {
+				release(conn, pStatement, rs);
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
 }
