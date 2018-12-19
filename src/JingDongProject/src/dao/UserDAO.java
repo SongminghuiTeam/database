@@ -167,4 +167,48 @@ public class UserDAO extends DaoBase{
 			}
 		}
 	}
+	
+	@Test
+	public void updateMail() {
+		Connection conn = null;
+		PreparedStatement pStatement = null;
+		ResultSet rs = null;
+		
+		String username = "heyulin";
+		String mail = "294813616@qq.com";
+		
+		try {
+			conn = getConnection();
+			String sql = "select * from user where userID=?";
+			pStatement = conn.prepareStatement(sql);
+			pStatement.setString(1, username);
+			rs = pStatement.executeQuery();
+			
+			if(rs.next()) {
+				sql = "update user set mail=? where userID=?";
+				pStatement = conn.prepareStatement(sql);
+				pStatement.setString(1, mail);
+				pStatement.setString(2, username);
+				
+				int row = pStatement.executeUpdate();
+				if(row > 0) {
+					System.out.println("update mail successfully");
+				}
+				else {
+					System.out.println("update mail failed");
+				}
+			}
+			else {
+				System.out.println("no users named " + username);
+			}
+		}catch(Exception sqlException) {
+			sqlException.printStackTrace();
+		}finally {
+			try {
+				release(conn, pStatement, rs);
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
 }
