@@ -112,4 +112,47 @@ public class ClassificationDAO extends DaoBase{
 			e.printStackTrace();
 		}		
 	}
+	
+	//修改小分类所属的大分类
+	@org.junit.Test
+	public void updateCategoryID() {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		
+		String classificationName = "电视机";
+		String newCategoryName = "电器";
+
+		ClassificationDAO clDAO = new ClassificationDAO();
+		Long classificationID = clDAO.queryClassificationID(classificationName);
+		if(classificationID == -1) {
+			System.out.println("Update failed");
+			return;			
+		}		
+		
+		CategoryDAO caDAO = new CategoryDAO();
+		Long newCategoryID = caDAO.queryCategoryID(newCategoryName);
+		if(newCategoryID == -1) {
+			System.out.println("Update failed");
+			return;
+		}
+		
+		
+		try {
+			conn = this.getConnection();
+			String sql = "Update Classification set categoryID = ? where classificationID = ?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setLong(1, newCategoryID);
+			pstmt.setLong(2, classificationID);
+			
+			if(pstmt.executeUpdate() > 0) {
+				System.out.println("Update successfully");
+			}
+			else {
+				System.out.println("Update failed");
+			}			
+			
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+	}
 }
