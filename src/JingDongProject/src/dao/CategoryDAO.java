@@ -131,6 +131,38 @@ public class CategoryDAO extends DaoBase{
 				String classificationName = rs.getString(1);
 				cl.search(classificationName);
 			}
+			this.release(conn, pstmt, rs);
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	//删
+	@org.junit.Test
+	public void delete() {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		
+		String categoryName = "服装";
+		
+		CategoryDAO cDAO = new CategoryDAO();
+		Long categoryID = cDAO.queryCategoryID(categoryName);
+		
+		if(categoryID == -1) {			
+			System.out.println("no categoryName " + categoryName);
+			return;
+		}
+		
+		try {
+			conn = this.getConnection();
+			
+			String sql = "delete from Category where categoryID = ?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setLong(1, categoryID);
+			pstmt.executeUpdate();
+			
+			System.out.println("Delete successfully");
+			this.release(conn, pstmt, null);
 			
 		}catch(SQLException e) {
 			e.printStackTrace();
