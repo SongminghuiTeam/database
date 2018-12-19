@@ -17,7 +17,7 @@ public class NewsDAO extends DaoBase {
 	@Test
 	public void insert() {
 		News news = new News();
-		news.setContent("衣服上新了");
+		news.setContent("裤子上新了");
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date date = new Date();
 		String time = df.format(date);
@@ -125,5 +125,35 @@ public class NewsDAO extends DaoBase {
 		}
 		release(connection, pStatement, null);
 	}
+	/**
+	 * 测试 根据 newsName进行模糊查询
+	 */
+	@Test
+	public void searchBySomeNewsName() {
+		News news = new News();
+		String content = "新";
+		Connection connection = getConnection();
+		String sql = "select * from news where content like ?";
+		PreparedStatement pStatement = null;
+		ResultSet resultSet = null;
+		try {
+			pStatement = connection.prepareStatement(sql);
+			pStatement.setString(1, "%" + content + "%");
+			resultSet = pStatement.executeQuery();
+			while (resultSet.next()) {
+				news.setContent(resultSet.getString("content"));
+				news.setNewsID(resultSet.getLong("newsID"));
+				news.setPublishTime(resultSet.getString("publishTime"));
+				news.setStoreID(resultSet.getLong("storeID"));
+				news.setVisitVolume(resultSet.getLong("visitVolume"));
+				System.out.println(news.getNewsID() + " " + news.getStoreID() + " " + news.getContent() + " "
+						+ news.getPublishTime() + " " + news.getVisitVolume());
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		release(connection, pStatement, resultSet);
+	}
+
 	
 }
