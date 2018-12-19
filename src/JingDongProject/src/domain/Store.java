@@ -1,16 +1,11 @@
 package domain;
 
 public class Store {
-	private int storeID;
+	private Long storeID;
 	private String userID;
 	private String storeName;
-	private float score;
-	public int getStoreID() {
-		return storeID;
-	}
-	public void setStoreID(int storeID) {
-		this.storeID = storeID;
-	}
+	private Float score;
+	
 	public String getUserID() {
 		return userID;
 	}
@@ -23,11 +18,19 @@ public class Store {
 	public void setStoreName(String storeName) {
 		this.storeName = storeName;
 	}
-	public float getScore() {
+	
+	public Long getStoreID() {
+		return storeID;
+	}
+	public void setStoreID(Long storeID) {
+		this.storeID = storeID;
+	}
+	public Float getScore() {
 		return score;
 	}
-	public void setScore(float score) {
+	public void setScore(Float score) {
 		this.score = score;
 	}
+
 	
 }
