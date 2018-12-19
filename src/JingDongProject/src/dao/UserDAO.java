@@ -205,7 +205,7 @@ public class UserDAO extends DaoBase{
 				}
 			}
 			else {
-				System.out.println("no users named " + username);
+				System.out.println("no user named " + username);
 			}
 		}catch(Exception sqlException) {
 			sqlException.printStackTrace();
@@ -255,7 +255,7 @@ public class UserDAO extends DaoBase{
 				}
 			}
 			else {
-				System.out.println("no users named " + username);
+				System.out.println("no user named " + username);
 			}
 		}catch(Exception sqlException) {
 			sqlException.printStackTrace();
@@ -305,7 +305,7 @@ public class UserDAO extends DaoBase{
 				}
 			}
 			else {
-				System.out.println("no users named " + username);
+				System.out.println("no user named " + username);
 			}
 		}catch(Exception sqlException) {
 			sqlException.printStackTrace();

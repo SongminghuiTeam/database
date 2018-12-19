@@ -101,7 +101,7 @@ public class DetailedDAO extends DaoBase{
 				}
 			}
 			else {
-				System.out.println("no users named " + username);
+				System.out.println("no user named " + username);
 			}
 		}catch(Exception sqlException) {
 			sqlException.printStackTrace();
@@ -114,13 +114,14 @@ public class DetailedDAO extends DaoBase{
 		}
 	}
 	
-	/*public void updateNickName() {
+	@Test
+	public void updateNickName() {
 		Connection conn = null;
 		PreparedStatement pStatement = null;
 		ResultSet rs = null;
 		
 		String username = "heyulin";
-		String password = "111111";
+		String password = "yolane980401";
 		String nickName = "hegiu";
 		
 		try {
@@ -132,17 +133,17 @@ public class DetailedDAO extends DaoBase{
 			
 			if(rs.next()) {
 				if(rs.getString("password").equals(password)) {
-					sql = "update user set phone=? where userID=?";
+					sql = "update detailed set nickName=? where userID=?";
 					pStatement = conn.prepareStatement(sql);
-					pStatement.setString(1, phone);
+					pStatement.setString(1, nickName);
 					pStatement.setString(2, username);
 					
 					int row = pStatement.executeUpdate();
 					if(row > 0) {
-						System.out.println("update phone successfully");
+						System.out.println("update nickName successfully");
 					}
 					else {
-						System.out.println("update phone failed");
+						System.out.println("update nickName failed");
 					}
 				}
 				else {
@@ -150,7 +151,7 @@ public class DetailedDAO extends DaoBase{
 				}
 			}
 			else {
-				System.out.println("no users named " + username);
+				System.out.println("no user named " + username);
 			}
 		}catch(Exception sqlException) {
 			sqlException.printStackTrace();
@@ -161,5 +162,5 @@ public class DetailedDAO extends DaoBase{
 				e.printStackTrace();
 			}
 		}
-	}*/
+	}
 }
