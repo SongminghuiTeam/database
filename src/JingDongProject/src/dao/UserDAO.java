@@ -2,6 +2,9 @@ package dao;
 
 import java.sql.Connection;
 import java.util.LinkedList;
+
+import org.junit.Test;
+
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
@@ -14,6 +17,7 @@ public class UserDAO extends DaoBase{
 	public void insert() {
 		Connection conn = null;
 		PreparedStatement pStatement = null;
+		ResultSet rSet = null;
 		
 		User user = new User("chenwanjing","13128662811","chenwanjing@163.com","222222");
 		
@@ -51,22 +55,27 @@ public class UserDAO extends DaoBase{
 		}
 	}
 	
-	// public void 
-	// 登录 用户名查询
-	/*public void searchByUsername(String username,String password) {
+	// login by username
+	@org.junit.Test
+	public void searchByUsername() {
 		Connection conn = null;
-		Statement statement = null;
+		PreparedStatement pStatement = null;
 		ResultSet rs = null;
+		
+		String username = "chenwanjing";
+		String truePassword = "222222";
+		String falsePassword = "111111";
 		
 		try {
 			conn = getConnection();
-			statement = conn.createStatement();
-			rs = statement.executeQuery("select * from Register where username=" + "'" + username + "'" + " and password=" + "'" + password + "'");
+			String sql = "select * from user where userID=" + "'" + username + "'" + " and password=" + "'" + truePassword + "'";
+			pStatement = conn.prepareStatement(sql);
+			rs = pStatement.executeQuery();
 			
 			if(rs.next()) {
 				System.out.println("login Success");
 				System.out.println("login Info");
-				System.out.println("username:" + rs.getString("username") + " phone:" + rs.getString("phone") + " mail:" + rs.getString("") + " password:" + rs.getString("password"));
+				System.out.println("username:" + rs.getString("userID") + " phone:" + rs.getString("phone") + " mail:" + rs.getString("mail") + " password:" + rs.getString("password"));
 			}
 			else {
 				System.out.println("login Error");
@@ -75,10 +84,10 @@ public class UserDAO extends DaoBase{
 			sqlException.printStackTrace();
 		}finally {
 			try {
-				release(conn, statement, rs);
+				release(conn, pStatement, rs);
 			}catch(Exception e) {
 				e.printStackTrace();
 			}
 		}
-	}*/
+	}
 }
