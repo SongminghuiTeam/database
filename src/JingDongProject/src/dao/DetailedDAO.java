@@ -163,4 +163,54 @@ public class DetailedDAO extends DaoBase{
 			}
 		}
 	}
+	
+	@Test
+	public void updateJdBean() {
+		Connection conn = null;
+		PreparedStatement pStatement = null;
+		ResultSet rs = null;
+		
+		String username = "heyulin";
+		String password = "yolane980401";
+		Long jdBean = (long)30;
+		
+		try {
+			conn = getConnection();
+			String sql = "select * from user where userID=?";
+			pStatement = conn.prepareStatement(sql);
+			pStatement.setString(1, username);
+			rs = pStatement.executeQuery();
+			
+			if(rs.next()) {
+				if(rs.getString("password").equals(password)) {
+					sql = "update detailed set jdBean=? where userID=?";
+					pStatement = conn.prepareStatement(sql);
+					pStatement.setLong(1, jdBean);
+					pStatement.setString(2, username);
+					
+					int row = pStatement.executeUpdate();
+					if(row > 0) {
+						System.out.println("update jdBean successfully");
+					}
+					else {
+						System.out.println("update jdBean failed");
+					}
+				}
+				else {
+					System.out.println("password Error!!!");
+				}
+			}
+			else {
+				System.out.println("no user named " + username);
+			}
+		}catch(Exception sqlException) {
+			sqlException.printStackTrace();
+		}finally {
+			try {
+				release(conn, pStatement, rs);
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
 }
