@@ -135,8 +135,7 @@ public class ClassificationDAO extends DaoBase{
 			System.out.println("Update failed");
 			return;
 		}
-		
-		
+			
 		try {
 			conn = this.getConnection();
 			String sql = "Update Classification set categoryID = ? where classificationID = ?";
@@ -149,7 +148,42 @@ public class ClassificationDAO extends DaoBase{
 			}
 			else {
 				System.out.println("Update failed");
-			}			
+			}		
+			this.release(conn, pstmt, null);
+			
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	//查
+	@org.junit.Test
+	public void search() {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		String classificationName = "空调";
+
+		ClassificationDAO clDAO = new ClassificationDAO();
+		Long classificationID = clDAO.queryClassificationID(classificationName);
+		if(classificationID == -1) {
+			System.out.println("Search failed");
+			return;			
+		}			
+		
+		try {
+			conn = this.getConnection();
+			String sql = "select productName from Product where Product.classificationID=?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setLong(1, classificationID);		
+			
+			System.out.println(classificationName + "：");
+			rs = pstmt.executeQuery();;
+			while(rs.next()) {
+				System.out.println("\t" + rs.getString(1));
+			}
+			this.release(conn, pstmt, rs);
 			
 		}catch(SQLException e) {
 			e.printStackTrace();
