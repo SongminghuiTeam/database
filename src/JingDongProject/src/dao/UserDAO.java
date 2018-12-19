@@ -318,4 +318,37 @@ public class UserDAO extends DaoBase{
 			}
 		}
 	}
+	
+	// delete column in detailed with foreign-key at the same time
+	@Test
+	public void delete() {
+		Connection conn = null;
+		PreparedStatement pStatement = null;
+		ResultSet rs = null;
+		
+		String username = "liangxiaoke";
+		
+		try {
+			conn = getConnection();
+			String sql = "delete from user where userID=?";
+			pStatement = conn.prepareStatement(sql);
+			pStatement.setString(1, username);
+			
+			int row = pStatement.executeUpdate();
+			if(row > 0) {
+				System.out.println("delete successfully");
+			}
+			else {
+				System.out.println("delete failed");
+			}
+		}catch(Exception sqlException) {
+			sqlException.printStackTrace();
+		}finally {
+			try {
+				release(conn, pStatement, rs);
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
 }
