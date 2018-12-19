@@ -64,4 +64,41 @@ public class CategoryDAO extends DaoBase{
 		}
 		return categoryID;
 	}
+	
+	//改
+	@org.junit.Test
+	public void update() {
+		Connection conn = null;
+		PreparedStatement pstmt = null;	
+		
+		String oldCategoryName = "家电";
+		String newCategoryName = "电器";
+		
+		CategoryDAO cDAO = new CategoryDAO();
+		Long categoryID = cDAO.queryCategoryID(oldCategoryName);
+		
+		if(categoryID == -1) {			
+			System.out.println("Update failed");
+			return;
+		}
+		
+		try {
+			conn = this.getConnection();
+			String sql = "update Category set categoryName = ? where categoryID = ?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, newCategoryName);
+			pstmt.setLong(2, categoryID);
+			
+			if(pstmt.executeUpdate() > 0) {
+				System.out.println("Update successfully");
+			}
+			else {
+				System.out.println("Update failed");
+			}
+			
+			this.release(conn, pstmt, null);			
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+	}
 }
