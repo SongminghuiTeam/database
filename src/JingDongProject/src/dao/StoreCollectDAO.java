@@ -33,28 +33,6 @@ public class StoreCollectDAO extends DaoBase{
 		}
 	}
 
-	@Test
-	public void deleteByUserID() {
-		Connection connection=null;
-		PreparedStatement pStatement=null;
-		try {
-			connection=getConnection();
-			String sql="delete from storecollect where userID=?";
-			pStatement=connection.prepareStatement(sql);
-			pStatement.setString(1, "lxk");
-			int rows=pStatement.executeUpdate();
-			if(rows>0) {
-				System.out.println("delete successfully!");
-			}
-			else {
-				System.out.println("delete defeat!");
-			}	
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		} finally {
-			release(connection, pStatement, null);
-		}
-	}
 	
 	@Test
 	public void queryByUserID() {

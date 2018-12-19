@@ -35,29 +35,6 @@ public class ProductCollectDAO extends DaoBase{
 			release(connection, pStatement, null);
 		}
 	}
-
-	@Test
-	public void delete() {
-		Connection connection=null;
-		PreparedStatement pStatement=null;
-		try {
-			connection=getConnection();
-			String sql="delete from productcollect where pcollectID=?";
-			pStatement=connection.prepareStatement(sql);
-			pStatement.setLong(1, 7);
-			int rows=pStatement.executeUpdate();
-			if(rows>0) {
-				System.out.println("delete successfully!");
-			}
-			else {
-				System.out.println("delete defeat!");
-			}	
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		} finally {
-			release(connection, pStatement, null);
-		}
-	}
 	
 	@Test
 	public void queryByUserID() {
