@@ -62,4 +62,104 @@ public class DetailedDAO extends DaoBase{
 			}
 		}
 	}
+	
+	@Test
+	public void search() {
+		Connection conn = null;
+		PreparedStatement pStatement = null;
+		ResultSet rs = null;
+		
+		String username = "chenwanjing";
+		String password = "222222";
+		
+		try {
+			conn = getConnection();
+			String sql = "select * from user where userID=?";
+			pStatement = conn.prepareStatement(sql);
+			pStatement.setString(1, username);
+			rs = pStatement.executeQuery();
+			
+			if(rs.next()) {
+				if(rs.getString("password").equals(password)) {
+					sql = "select * from detailed where userID=?";
+					pStatement = conn.prepareStatement(sql);
+					pStatement.setString(1, username);
+					
+					rs = pStatement.executeQuery();
+					if(rs.next()) {
+						System.out.println("search successfully");
+						System.out.println("detailed info");
+						System.out.println("username:" + rs.getString("userID") + " nickname:" + rs.getString("nickName") + " gender:" + rs.getString("gender") + 
+								" birthday:" + rs.getString("birthday") + " trueName:" + rs.getString("trueName") + " ID:" + rs.getString("idNumber") + " jdBeans:" + rs.getLong("jdBean"));
+					}
+					else {
+						System.out.println("search failed");
+					}
+				}
+				else {
+					System.out.println("password Error!!!");
+				}
+			}
+			else {
+				System.out.println("no users named " + username);
+			}
+		}catch(Exception sqlException) {
+			sqlException.printStackTrace();
+		}finally {
+			try {
+				release(conn, pStatement, rs);
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	/*public void updateNickName() {
+		Connection conn = null;
+		PreparedStatement pStatement = null;
+		ResultSet rs = null;
+		
+		String username = "heyulin";
+		String password = "111111";
+		String nickName = "hegiu";
+		
+		try {
+			conn = getConnection();
+			String sql = "select * from user where userID=?";
+			pStatement = conn.prepareStatement(sql);
+			pStatement.setString(1, username);
+			rs = pStatement.executeQuery();
+			
+			if(rs.next()) {
+				if(rs.getString("password").equals(password)) {
+					sql = "update user set phone=? where userID=?";
+					pStatement = conn.prepareStatement(sql);
+					pStatement.setString(1, phone);
+					pStatement.setString(2, username);
+					
+					int row = pStatement.executeUpdate();
+					if(row > 0) {
+						System.out.println("update phone successfully");
+					}
+					else {
+						System.out.println("update phone failed");
+					}
+				}
+				else {
+					System.out.println("password Error!!!");
+				}
+			}
+			else {
+				System.out.println("no users named " + username);
+			}
+		}catch(Exception sqlException) {
+			sqlException.printStackTrace();
+		}finally {
+			try {
+				release(conn, pStatement, rs);
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}*/
 }
