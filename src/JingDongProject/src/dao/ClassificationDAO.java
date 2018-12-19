@@ -186,4 +186,34 @@ public class ClassificationDAO extends DaoBase{
 			e.printStackTrace();
 		}
 	}
+	
+	//删
+	@org.junit.Test
+	public void delete() {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		
+		String classificationName = "电视机";
+		
+		ClassificationDAO clDAO = new ClassificationDAO();
+		Long classificationID = clDAO.queryClassificationID(classificationName);	
+
+		if(classificationID == -1) {			
+			System.out.println("no classificationName " + classificationName);
+			return;
+		}
+		
+		try {
+			conn = this.getConnection();
+			String sql = "delete from Classification where classificationID = ?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setLong(1, classificationID);
+			pstmt.executeUpdate();
+			System.out.println("Delete successfully");
+			this.release(conn, pstmt, null);
+			
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
+	}
 }
