@@ -54,23 +54,4 @@ public class DaoBase implements Dao {
 		}
 	}
 
-	public void release(Connection connection, PreparedStatement statement) {
-
-		if (statement != null) {
-			try {
-				statement.close();
-			} catch (Exception e) {
-				// TODO: handle exception
-			}
-			statement = null;
-		}
-		if (connection != null) {
-			try {
-				connection.close();
-			} catch (Exception e) {
-				// TODO: handle exception
-			}
-			connection = null;
-		}
-	}
 }
