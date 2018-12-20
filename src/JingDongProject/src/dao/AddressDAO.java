@@ -101,5 +101,83 @@ public class AddressDAO extends DaoBase{
 		}	
 	}
 	
+	/**
+	 * 根据userID和指定的地址ID修改user的某个地址
+	 */
+	@Test
+	public void updateByUserID() {
+		Connection connection=null;
+		PreparedStatement pStatement=null;	
+		Address address=new Address();
+		
+		address.setUserID("hyl");//指定用户ID
+		address.setAddressID((long)1);//指定该用户的其中一个地址ID
+		
+		address.setProvince("广东");
+		address.setCity("珠海");
+		address.setBlock("海淀");
+		address.setStreet("XX");
+		address.setAddress("XXXXXXX");
+		address.setReceiver("壳子");
+		address.setPhone("17801122933");
+		
+		try {
+			connection=getConnection();
+			String sql="update address set province=?,city=?,block=?,street=?,address=?,receiver=?,phone=? where userID=? and addressID=?";
+			pStatement=connection.prepareStatement(sql);
+			
+			pStatement.setString(1, address.getProvince());
+			pStatement.setString(2, address.getCity());
+			pStatement.setString(3, address.getBlock());
+			pStatement.setString(4, address.getStreet());
+			pStatement.setString(5, address.getAddress());
+			pStatement.setString(6, address.getReceiver());
+			pStatement.setString(7, address.getPhone());
+			pStatement.setString(8, address.getUserID());
+			pStatement.setLong(9, address.getAddressID());
+			
+			int rows = pStatement.executeUpdate();
+			if(rows>0) {
+				System.out.println("update successfully!");
+			}
+			else {
+				System.out.println("update defeat!");
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		} finally {
+			release(connection, pStatement, null);
+		}
+	}
 	
+	/**
+	 * 根据userID和指定的该user的addressID删除某条地址记录
+	 */
+	@Test
+	public void deleteByUserID() {
+		Connection connection=null;
+		PreparedStatement pStatement=null;	
+		
+		String userID="hyl";
+		Long addressID=(long)1;
+		
+		try {
+			connection=getConnection();
+			String sql="delete from address where userID=? and addressID=?";
+			pStatement=connection.prepareStatement(sql);
+			pStatement.setString(1, userID);
+			pStatement.setLong(2, addressID);
+			int rows=pStatement.executeUpdate();		
+			if(rows>0) {
+				System.out.println("delete successfully!");	
+			}
+			else {
+				System.out.println("delete defeat!");
+			}
+		} catch (Exception e) {		
+			e.printStackTrace();		
+		} finally {
+			release(connection, pStatement, null);
+		}
+	}
 }
