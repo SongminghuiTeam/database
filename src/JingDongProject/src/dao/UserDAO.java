@@ -351,4 +351,30 @@ public class UserDAO extends DaoBase{
 			}
 		}
 	}
+	
+	public boolean isExist(String userID) {
+		Connection conn = null;
+		PreparedStatement pStatement = null;
+		ResultSet rs = null;
+		try {
+			conn = getConnection();
+			String sql = "select * from user where userID=?";
+			pStatement = conn.prepareStatement(sql);
+			pStatement.setString(1, userID);
+			rs = pStatement.executeQuery();
+			
+			if(rs.next())
+				return true;
+			
+		}catch(Exception sqlException) {
+			sqlException.printStackTrace();
+		}finally {
+			try {
+				release(conn, pStatement, rs);
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
 }
