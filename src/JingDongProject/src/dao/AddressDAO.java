@@ -180,4 +180,31 @@ public class AddressDAO extends DaoBase{
 			release(connection, pStatement, null);
 		}
 	}
+	
+	/**
+	 * 根据addressID查询userID
+	 */
+	public String queryUserIDByAddressID(Long addressID) {
+		Connection connection=null;
+		PreparedStatement pStatement=null;	
+		ResultSet resultset=null;	
+		String userID = null;
+		
+		try {
+			connection=getConnection();
+			String sql="select userID from address where addressID=?";
+			pStatement=connection.prepareStatement(sql);
+			pStatement.setLong(1, addressID);
+			resultset=pStatement.executeQuery();
+			while(resultset.next()) {
+				userID = resultset.getString(1);
+			}
+			
+		} catch (Exception e) {		
+			e.printStackTrace();		
+		} finally {
+			release(connection, pStatement, resultset);
+		}
+		return userID;
+	}
 }
