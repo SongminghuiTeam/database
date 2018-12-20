@@ -10,33 +10,9 @@ import domain.Order;
 
 public class OrderDAO extends DaoBase {
 	//增
-	@org.junit.Test
-	public void insert() {
+	public void insert(Order order) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;		
-		
-		Order order = new Order();
-		order.setUserID("chenwanjing");
-		
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Date date=new Date();
-		String orderTime = df.format(date);
-		order.setOrderTime(orderTime);
-		order.setAddressID((long)2);
-		
-		//判断userID是否合法
-		UserDAO uDAO = new UserDAO();
-		if(!uDAO.isExist(order.getUserID())) {
-			System.out.println("该用户不存在");
-			return;
-		}
-		
-		//判断addressID是否合法
-		AddressDAO aDAO = new AddressDAO();
-		if(!aDAO.queryUserIDByAddressID(order.getAddressID()).equals(order.getUserID())) {
-			System.out.println("该地址不属于该用户");
-			return;
-		}
 		
 		try {
 			conn =  this.getConnection();
@@ -58,5 +34,43 @@ public class OrderDAO extends DaoBase {
 		}finally {
 			this.release(conn, pstmt, null);
 		}
+	}
+	
+	//删
+	public void delete(Long orderID) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		
+		try {
+			conn = this.getConnection();
+			
+			String sql = "delete from `order` where orderID = ?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setLong(1, orderID);
+			pstmt.executeUpdate();
+			
+			System.out.println("Delete successfully");
+			
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}finally {
+			this.release(conn, pstmt, null);
+		}		
+	}
+	
+	@org.junit.Test
+	public void Test() {
+		Order order = new Order();
+		order.setUserID("chenwanjing");
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date date = new Date();
+		String orderTime = df.format(date);
+		order.setOrderTime(orderTime);
+		order.setAddressID((long)2);
+		
+		insert(order);
+		
+		delete((long)2);
+		
 	}
 }
