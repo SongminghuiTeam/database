@@ -1,8 +1,10 @@
 package dao;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
 
 import org.junit.Test;
 
@@ -10,13 +12,10 @@ import domain.Detailed;
 import domain.User;
 
 public class DetailedDAO extends DaoBase{
-	@Test
-	public void insert() {
+	public void insert(Detailed detailed) {
 		Connection conn = null;
 		PreparedStatement pStatement = null;
 		ResultSet rs = null;
-		
-		Detailed detailed = new Detailed("heyulin", "yolanehe", "女", "1998-4-1" , "何钰霖", "440402199804019047");
 
 		try {
 			conn = getConnection();
@@ -72,14 +71,10 @@ public class DetailedDAO extends DaoBase{
 		}
 	}
 	
-	@Test
-	public void search() {
+	public void search(String username, String password) {
 		Connection conn = null;
 		PreparedStatement pStatement = null;
 		ResultSet rs = null;
-		
-		String username = "chenwanjing";
-		String password = "222222";
 		
 		try {
 			conn = getConnection();
@@ -97,20 +92,72 @@ public class DetailedDAO extends DaoBase{
 					rs = pStatement.executeQuery();
 					if(rs.next()) {
 						System.out.println("search successfully");
-						System.out.println("detailed info");
-						System.out.println("username:" + rs.getString("userID") + " nickname:" + rs.getString("nickName") + " gender:" + rs.getString("gender") + 
-								" birthday:" + rs.getString("birthday") + " trueName:" + rs.getString("trueName") + " ID:" + rs.getString("idNumber") + " jdBeans:" + rs.getLong("jdBean"));
+						System.out.println("username:" + rs.getString("userID") + "   nickname:" + rs.getString("nickName") +  
+								"   jdBeans:" + rs.getLong("jdBean"));
+						System.out.println("gender:" + rs.getString("gender") + "   birthday:" + rs.getString("birthday"));
+						System.out.println("trueName:" + rs.getString("trueName") + "   ID:" + rs.getString("idNumber"));
+						System.out.print("\n");
 					}
 					else {
 						System.out.println("search failed");
+						System.out.print("\n");
 					}
 				}
 				else {
 					System.out.println("password Error!!!");
+					System.out.print("\n");
 				}
 			}
 			else {
-				System.out.println("no user named " + username);
+				System.out.println("no such user");
+				System.out.print("\n");
+			}
+		}catch(Exception sqlException) {
+			sqlException.printStackTrace();
+		}finally {
+			try {
+				release(conn, pStatement, rs);
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void Update(String userID,Detailed detailed){
+		Connection conn = null;
+		PreparedStatement pStatement = null;
+		ResultSet rs = null;
+		
+		try {
+			conn = getConnection();
+			String sql = "select * from user where userID=?";
+			pStatement = conn.prepareStatement(sql);
+			pStatement.setString(1, userID);
+			
+			rs = pStatement.executeQuery();
+			if(rs.next()) {
+				sql = "update detailed set nickName=?, gender=?, birthday=?, trueName=?, idNumber=?, jdBean=? where userID=?";
+				pStatement = conn.prepareStatement(sql);
+				
+				pStatement.setString(1, detailed.getNickName());
+				pStatement.setString(2, detailed.getGender());
+				pStatement.setString(3, detailed.getBirthday());
+				pStatement.setString(4, detailed.getTrueName());
+				pStatement.setString(5, detailed.getIdNumber());
+				pStatement.setLong(6, detailed.getJdBean());
+				pStatement.setString(7, userID);
+				
+				int row = pStatement.executeUpdate();
+				
+				if(row > 0) {
+					System.out.println("update successfully!");
+				}
+				else {
+					System.out.println("update failed!");
+				}
+			}
+			else {
+				System.out.println("no such user");
 			}
 		}catch(Exception sqlException) {
 			sqlException.printStackTrace();
@@ -124,102 +171,17 @@ public class DetailedDAO extends DaoBase{
 	}
 	
 	@Test
-	public void updateNickName() {
-		Connection conn = null;
-		PreparedStatement pStatement = null;
-		ResultSet rs = null;
+	public void Test() {
+		Detailed detailed = new Detailed("heyulin", "yolanehe", "1998-04-01", "", "");
+		// insert(detailed);
 		
-		String username = "heyulin";
-		String password = "yolane980401";
-		String nickName = "hegiu";
+		search("heyulin", "111111");
+		search("heyulin", "123456");
 		
-		try {
-			conn = getConnection();
-			String sql = "select * from user where userID=?";
-			pStatement = conn.prepareStatement(sql);
-			pStatement.setString(1, username);
-			rs = pStatement.executeQuery();
-			
-			if(rs.next()) {
-				if(rs.getString("password").equals(password)) {
-					sql = "update detailed set nickName=? where userID=?";
-					pStatement = conn.prepareStatement(sql);
-					pStatement.setString(1, nickName);
-					pStatement.setString(2, username);
-					
-					int row = pStatement.executeUpdate();
-					if(row > 0) {
-						System.out.println("update nickName successfully");
-					}
-					else {
-						System.out.println("update nickName failed");
-					}
-				}
-				else {
-					System.out.println("password Error!!!");
-				}
-			}
-			else {
-				System.out.println("no user named " + username);
-			}
-		}catch(Exception sqlException) {
-			sqlException.printStackTrace();
-		}finally {
-			try {
-				release(conn, pStatement, rs);
-			}catch(Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
-	
-	@Test
-	public void updateJdBean() {
-		Connection conn = null;
-		PreparedStatement pStatement = null;
-		ResultSet rs = null;
+		Detailed newDetailed = new Detailed("heyulin", "yolane", "1998-04-01", "何钰霖", "440402199804019047");
+		Update("heyulin", newDetailed);
 		
-		String username = "heyulin";
-		String password = "yolane980401";
-		Long jdBean = (long)30;
-		
-		try {
-			conn = getConnection();
-			String sql = "select * from user where userID=?";
-			pStatement = conn.prepareStatement(sql);
-			pStatement.setString(1, username);
-			rs = pStatement.executeQuery();
-			
-			if(rs.next()) {
-				if(rs.getString("password").equals(password)) {
-					sql = "update detailed set jdBean=? where userID=?";
-					pStatement = conn.prepareStatement(sql);
-					pStatement.setLong(1, jdBean);
-					pStatement.setString(2, username);
-					
-					int row = pStatement.executeUpdate();
-					if(row > 0) {
-						System.out.println("update jdBean successfully");
-					}
-					else {
-						System.out.println("update jdBean failed");
-					}
-				}
-				else {
-					System.out.println("password Error!!!");
-				}
-			}
-			else {
-				System.out.println("no user named " + username);
-			}
-		}catch(Exception sqlException) {
-			sqlException.printStackTrace();
-		}finally {
-			try {
-				release(conn, pStatement, rs);
-			}catch(Exception e) {
-				e.printStackTrace();
-			}
-		}
+		search("heyulin", "111111");
+		search("heyulin", "123456");
 	}
 }
