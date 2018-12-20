@@ -10,15 +10,23 @@ import domain.StoreCollect;
 
 public class StoreCollectDAO extends DaoBase{
 	
-	@Test
-	public void insert(){
+	/**
+	 * 根据userID为该用户创建店铺收藏夹
+	 * @param userID
+	 */
+	public void insertByUserID(String userID){
 		Connection connection=null;
 		PreparedStatement pStatement=null;
+		//先查出这个用户是否已经有店铺收藏夹
+		if(searchByUserID(userID)!=null) {
+			System.out.println("该用户已有店铺收藏夹，无需添加！");
+			return ;
+		}
 		try {
 			connection=getConnection();
 			String sql="insert into storecollect(userID) values(?)";
 			pStatement=connection.prepareStatement(sql);
-			pStatement.setString(1, "lxk");
+			pStatement.setString(1, userID);
 			int rows = pStatement.executeUpdate();
 			if(rows>0) {
 				System.out.println("insert successfully!");
@@ -33,29 +41,46 @@ public class StoreCollectDAO extends DaoBase{
 		}
 	}
 
-	
-	@Test
-	public void queryByUserID() {
+	/**
+	 * 根据用户的userID查询该用户的店铺收藏夹的ID并返回scollectID
+	 * @param userID
+	 * @return
+	 */
+	public Long searchByUserID(String userID) {
 		Connection connection=null;
 		PreparedStatement pStatement=null;
 		ResultSet resultset=null;		
 		
 		StoreCollect sCollect=new StoreCollect();
+		sCollect.setUserID(userID);
 		try {
 			connection=getConnection();
 			String sql="select * from storecollect where userID=?";
 			pStatement=connection.prepareStatement(sql);
-			pStatement.setString(1, "cwj");
+			pStatement.setString(1, userID);
 			resultset=pStatement.executeQuery();
 			while(resultset.next()) {
 				sCollect.setScollectID(resultset.getLong(1));
-				sCollect.setUserID(resultset.getString(2));
-				System.out.println(sCollect.getScollectID()+"----"+sCollect.getUserID());
-			}				
+				System.out.println(userID+"的店铺收藏夹ID："+sCollect.getScollectID());
+				break;
+			}			
+			return sCollect.getScollectID();
 		} catch (Exception e) {
 			e.printStackTrace();
+			return null;
 		} finally {
 			release(connection, pStatement, resultset);
 		}
+	}
+	
+	@Test
+	public void test() {
+		//测试insert
+		String userID="lxk";
+		insertByUserID(userID);
+				
+		//测试queryByUserID
+		String userID2="hyl";
+		searchByUserID(userID2);
 	}
 }

@@ -3,46 +3,21 @@ package dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 
+import domain.StoreCollectStore;
+
 public class StoreCollectStoreDAO extends DaoBase{
-	/**
-	 * 根据scollectID查询指定收藏夹中的所有店铺ID
-	 */
-	@Test
-	public void queryByScollectID() {
-		Connection connection=null;
-		PreparedStatement pStatement=null;
-		ResultSet resultset=null;
-	
-		Long scollectID=(long)4;
-		try {
-			connection=getConnection();
-			String sql="select * from storecollectstore where scollectID=?";
-			pStatement=connection.prepareStatement(sql);
-			pStatement.setLong(1, scollectID);
-			resultset=pStatement.executeQuery();
-			while(resultset.next()) {
-				System.out.println(scollectID+"---"+resultset.getLong("storeID"));
-			}	
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			release(connection, pStatement, resultset);
-		}	
-	}
 	
 	/**
 	 * 根据scollectID向某个收藏夹中添加店铺ID
 	 */
-	@Test
-	public void insert() {
+	public void insert(Long scollectID,Long storeID) {
 		Connection connection=null;
-		PreparedStatement pStatement=null;
-		Long scollectID=(long)5;
-		Long storeID=(long)2;
-		
+		PreparedStatement pStatement=null;	
 		try {
 			connection=getConnection();
 			String sql="insert into storecollectstore values(?,?)";
@@ -64,15 +39,41 @@ public class StoreCollectStoreDAO extends DaoBase{
 	}
 	
 	/**
-	 * 根据scollectID删除某个收藏夹中的店铺ID
+	 * 根据scollectID查询指定收藏夹中的所有店铺ID
 	 */
-	@Test
-	public void deleteByScollectID() {
+	public List<Long> searchByScollectID(Long scollectID) {
 		Connection connection=null;
 		PreparedStatement pStatement=null;
-		Long scollectID=(long)5;
-		Long storeID=(long)2;
-		
+		ResultSet resultset=null;
+		List<Long> storeIDs=new ArrayList<Long>();
+		try {
+			connection=getConnection();
+			String sql="select * from storecollectstore where scollectID=?";
+			pStatement=connection.prepareStatement(sql);
+			pStatement.setLong(1, scollectID);
+			resultset=pStatement.executeQuery();
+			System.out.println("收藏夹"+scollectID+"下的所有店铺ID：");
+			while(resultset.next()) {
+				storeIDs.add(resultset.getLong("storeID"));
+				System.out.println(resultset.getLong("storeID"));
+			}	
+			return storeIDs;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			release(connection, pStatement, resultset);
+		}	
+	}
+	
+
+	
+	/**
+	 * 根据scollectID删除某个收藏夹中的店铺ID
+	 */
+	public void deleteByScollectID(Long scollectID,Long storeID) {
+		Connection connection=null;
+		PreparedStatement pStatement=null;		
 		try {
 			connection=getConnection();
 			String sql="delete from storecollectstore where scollectID=? and storeID=?";
@@ -91,5 +92,23 @@ public class StoreCollectStoreDAO extends DaoBase{
 		} finally {
 			release(connection, pStatement, null);
 		}
+	}
+	
+	@Test
+	public void test() {
+		//测试insert
+		StoreCollectStore storeCollectStore=new StoreCollectStore();
+		storeCollectStore.setScollectID((long)1);
+		storeCollectStore.setStoreID((long)2);
+		insert(storeCollectStore.getScollectID(), storeCollectStore.getStoreID());
+		
+		//测试searchByPcollectID
+		Long scollectID2=(long)1;
+		searchByScollectID(scollectID2);
+		
+		//测试deleteByPcollectID
+		storeCollectStore.setScollectID((long)1);
+		storeCollectStore.setStoreID((long)2);
+		deleteByScollectID(storeCollectStore.getScollectID(), storeCollectStore.getStoreID());
 	}
 }

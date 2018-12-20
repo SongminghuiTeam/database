@@ -4,7 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -47,11 +49,13 @@ public class CommentDAO extends DaoBase{
 	 * 按照产品ID查找某个产品的所有评论
 	 * @param productID
 	 */
-	public void queryByProductID(Long productID) {
+	public List<Comment> searchByProductID(Long productID) {
 		Connection connection=null;
 		PreparedStatement pStatement=null;
 		ResultSet resultset=null;	
+		List<Comment> comments=new ArrayList<Comment>();
 		Comment comment=new Comment();
+		comment.setProductID(productID);
 		try {
 			connection=getConnection();
 			String sql="select * from comment where productID=? and ispassed=?";
@@ -66,7 +70,9 @@ public class CommentDAO extends DaoBase{
 				comment.setCommentTime(resultset.getString(2));
 				comment.setContent(resultset.getString(3));
 				comment.setScore(resultset.getInt(4));
+				comment.setOrderID(resultset.getLong("orderID"));
 				
+				comments.add(comment);
 				//根据该条记录中得orderID在order表中找到userID
 				String sql2="select * from `order` where orderID=?";
 				pStatement=connection.prepareStatement(sql2);				
@@ -82,9 +88,11 @@ public class CommentDAO extends DaoBase{
 				System.out.print(comment.getCommentTime()+"\t");
 				System.out.print(comment.getContent()+"\t");
 				System.out.println(comment.getScore()+"星");				
-			}				
+			}		
+			return comments;
 		} catch (Exception e) {
 			e.printStackTrace();
+			return null;
 		} finally {
 			release(connection, pStatement, resultset);
 		}	
@@ -105,9 +113,9 @@ public class CommentDAO extends DaoBase{
 		comment.setProductID((long)2);
 		insert(comment);
 		
-		//测试queryByProductID
-		/*Long productID=(long)2;
-		queryByProductID(productID);*/
+		//测试searchByProductID
+		Long productID=(long)2;
+		searchByProductID(productID);
 		
 		
 		

@@ -3,6 +3,8 @@ package dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -46,15 +48,16 @@ public class AddressDAO extends DaoBase{
 	}
 	
 	/**
-	 * 根据userID查出该用户的所有地址信息
+	 * 根据userID查出该用户的所有地址信息,并返回list
 	 * @param userID
 	 */
-	public void queryAllAddress(String userID) {
+	public List<Address> searchAddressesByUserID(String userID) {
 		Connection connection=null;
 		PreparedStatement pStatement=null;
-		ResultSet resultset=null;		
+		ResultSet resultset=null;	
+		List<Address> addresses=new ArrayList<Address>();
 		Address address=new Address();
-		
+		address.setUserID(userID);
 		try {
 			connection=getConnection();
 			String sql="select * from address where userID=?";
@@ -66,6 +69,7 @@ public class AddressDAO extends DaoBase{
 			int i=0;
 			while(resultset.next()) {		
 				i++;
+				address.setAddressID(resultset.getLong("addressID"));
 				address.setProvince(resultset.getString("province"));
 				address.setCity(resultset.getString("city"));
 				address.setBlock(resultset.getString("block"));
@@ -73,10 +77,10 @@ public class AddressDAO extends DaoBase{
 				address.setAddress(resultset.getString("address"));
 				address.setReceiver(resultset.getString("receiver"));
 				address.setPhone(resultset.getString("phone"));
-						
+				addresses.add(address);		
+				
 				System.out.print(i+"\t");
 				System.out.print(userID+"\t");
-				
 				System.out.print(address.getProvince()+"省\t");
 				System.out.print(address.getCity()+"市\t");
 				System.out.print(address.getBlock()+"区\t");				
@@ -84,9 +88,11 @@ public class AddressDAO extends DaoBase{
 				System.out.print(address.getAddress()+"\t");				
 				System.out.print(address.getReceiver()+"收\t");	
 				System.out.println(address.getPhone());
-			}				
+			}	
+			return addresses;
 		} catch (Exception e) {
 			e.printStackTrace();
+			return null;
 		} finally {
 			release(connection, pStatement, resultset);
 		}	
@@ -98,7 +104,7 @@ public class AddressDAO extends DaoBase{
 	 * @param addressID
 	 * @return
 	 */
-	public Address queryOneAddress(String userID,Long addressID) {
+	public Address searchOneAddress(String userID,Long addressID) {
 		Connection connection=null;
 		PreparedStatement pStatement=null;
 		ResultSet resultset=null;			
@@ -213,7 +219,7 @@ public class AddressDAO extends DaoBase{
 	 * @param addressID
 	 * @return
 	 */
-	public String queryUserIDByAddressID(Long addressID) {
+	public String searchUserIDByAddressID(Long addressID) {
 		Connection connection=null;
 		PreparedStatement pStatement=null;	
 		ResultSet resultset=null;	
@@ -242,7 +248,7 @@ public class AddressDAO extends DaoBase{
 	public void test() {
 			
 		//测试insert
-		Address address=new Address();
+		/*Address address=new Address();
 		address.setUserID("hyl");
 		address.setProvince("北京");
 		address.setCity("北京");
@@ -251,32 +257,31 @@ public class AddressDAO extends DaoBase{
 		address.setAddress("清华东路35号北京林业大学");
 		address.setReceiver("cwj");
 		address.setPhone("13121862811");
-		insert(address);
+		insert(address);*/
 		
-		//测试queryAllByUserID
-		/*String userID="hyl";
-		queryAllAddress(userID);*/
+		//测试searchAddressesByUserID
+		String userID="hyl";
+		searchAddressesByUserID(userID);
 		
-		//测试queryByUserAndAddressID
+		//测试searchOneAddress
 		/*Long addressID=(long)4;
 		String userID="lxk";
-		queryOneAddress(userID, addressID);*/
+		searchOneAddress(userID, addressID);*/
 		
 		//测试updateAddress
-		/*Address address2=queryOneAddress("hyl", (long)8);
+		/*Address address2=searchOneAddress("hyl", (long)8);
 		address2.setProvince("北京");
 		address2.setCity("海淀");
 		updateAddress(address2);
 		System.out.println("after update:");
-		queryOneAddress("hyl", (long)8);*/
+		searchOneAddress("hyl", (long)8);*/
 		
 		//测试deleteByUserID
 		/*String userID="hyl";
 		Long addressID=(long)8;
 		deleteAddress(userID, addressID);*/
 		
-		//测试queryUserIDByAddressID
-		/*System.out.println(queryUserIDByAddressID((long)4));*/
+		//测试searchUserIDByAddressID
+		/*System.out.println(searchUserIDByAddressID((long)4));*/
 	}
-	
 }

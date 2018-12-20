@@ -11,15 +11,15 @@ import domain.ProductCollect;
 public class ProductCollectDAO extends DaoBase{
 	
 	/**
-	 * 根据userID，为该user添加一个收藏夹
+	 * 根据userID，为该user创建一个收藏夹
 	 * @param userID
 	 */
 	public void insertByUserID(String userID){
 		Connection connection=null;
 		PreparedStatement pStatement=null;
 		//先查出这个用户是否已经有产品收藏夹
-		if(queryByUserID(userID)!=null) {
-			System.out.println("对不起，该用户已有产品收藏夹，不能添加！");
+		if(searchByUserID(userID)!=null) {
+			System.out.println("该用户已有产品收藏夹，无需添加！");
 			return ;
 		}	
 		try {
@@ -46,7 +46,7 @@ public class ProductCollectDAO extends DaoBase{
 	 * @param userID
 	 * @return
 	 */
-	public Long queryByUserID(String userID) {
+	public Long searchByUserID(String userID) {
 		Connection connection=null;
 		PreparedStatement pStatement=null;
 		ResultSet resultset=null;			
@@ -81,7 +81,7 @@ public class ProductCollectDAO extends DaoBase{
 		
 		//测试queryByUserID
 		String userID2="lxk";
-		queryByUserID(userID2);
+		searchByUserID(userID2);
 
 	}
 }
