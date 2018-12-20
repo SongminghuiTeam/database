@@ -12,18 +12,29 @@ import domain.Store;
 
 public class StoreDAO extends DaoBase {
 
-	/**
-	 * 测试 一个用户账号只能添加一个店铺 用户必须在user表中存在
-	 */
 	@Test
-	public void insert() {
+	public void Test() {
 		Store store = new Store();
 		store.setScore(Float.valueOf(0));
-		store.setStoreName("梁晓珂的店铺");
-		store.setUserID("梁晓珂");
+		store.setStoreName("宋明惠的店铺");
+		store.setUserID("宋明惠");
+		//insert(store);
+		store=searchByUserID("宋明惠");
+		//store=searchByStoreName("宋明惠的店铺");
+		//updateStoreName("宋明惠店铺", store.getStoreID());
+		//updateScore(store.getStoreID(), (float) 2);
+		//delectByStoreID(store.getStoreID());
+	}
+
+	/**
+	 * 测试 一个用户账号只能添加一个店铺 用户必须在user表中存在
+	 * 并且一个用户只能有一个店铺
+	 */
+	public int insert(Store store) {
 		Connection connection = getConnection();
 		String sql = "insert store(userID,storeName,score) values(?,?,?)";
 		PreparedStatement pStatement = null;
+		int rSet = 0;
 		try {
 			pStatement = connection.prepareStatement(sql);
 			pStatement.setString(1, store.getUserID());
@@ -34,28 +45,28 @@ public class StoreDAO extends DaoBase {
 			e.printStackTrace();
 		}
 		try {
-			int rSet = pStatement.executeUpdate();
+			rSet = pStatement.executeUpdate();
 			if (rSet == 1)
 				System.out.println("insert success");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		release(connection, pStatement, null);
+		return rSet;
 	}
 
 	/**
 	 * 测试 如果存在这个店铺，那么只会有一个
 	 */
-	@Test
-	public void searchByUserID() {
+	public Store searchByUserID(String userID) {
 		Store store = new Store();
 		Connection connection = getConnection();
-		String sql = "select * from store where userID='宋明惠'";
+		String sql = "select * from store where userID=?";
 		PreparedStatement pStatement = null;
-		ResultSet resultSet=null;
+		ResultSet resultSet = null;
 		try {
 			pStatement = connection.prepareStatement(sql);
-			// pStatement.setString(1, "宋明惠");
+			pStatement.setString(1, userID);
 			resultSet = pStatement.executeQuery();
 			if (resultSet.next()) {
 				store.setStoreID(resultSet.getLong(1));
@@ -70,13 +81,13 @@ public class StoreDAO extends DaoBase {
 			e.printStackTrace();
 		}
 		release(connection, pStatement, resultSet);
+		return store;
 	}
 
 	/**
 	 * 测试 如果存在这个店铺，那么只会有一个
 	 */
-	@Test
-	public void searchByStoreName() {
+	public Store searchByStoreName(String storeName) {
 		Store store = new Store();
 		Connection connection = getConnection();
 		String sql = "select * from store where storeName=?";
@@ -84,7 +95,7 @@ public class StoreDAO extends DaoBase {
 		ResultSet resultSet = null;
 		try {
 			pStatement = connection.prepareStatement(sql);
-			pStatement.setString(1, "宋明惠的店铺");
+			pStatement.setString(1, storeName);
 			resultSet = pStatement.executeQuery();
 			if (resultSet.next()) {
 				store.setStoreID(resultSet.getLong(1));
@@ -99,22 +110,22 @@ public class StoreDAO extends DaoBase {
 			e.printStackTrace();
 		}
 		release(connection, pStatement, resultSet);
+		return store;
 	}
 
 	/**
 	 * 根据店铺id更新店铺名
 	 */
-
-	@Test
-	public void updateStoreName() {
+	public int updateStoreName(String storeName, Long storeID) {
 		Connection connection = getConnection();
 		String sql = "update store set storeName=? where storeID=?";
 		PreparedStatement pStatement = null;
+		int resultSet = 0;
 		try {
 			pStatement = connection.prepareStatement(sql);
-			pStatement.setString(1, "宋明惠店铺");
-			pStatement.setInt(2, 2);
-			int resultSet = pStatement.executeUpdate();
+			pStatement.setString(1, storeName);
+			pStatement.setLong(2, storeID);
+			resultSet = pStatement.executeUpdate();
 			if (resultSet != 0) {
 				System.out.println("update storeName success");
 			}
@@ -122,21 +133,22 @@ public class StoreDAO extends DaoBase {
 			e.printStackTrace();
 		}
 		release(connection, pStatement, null);
+		return resultSet;
 	}
 
 	/**
 	 * 测试 根据店铺id进行更新评分
 	 */
-	@Test
-	public void updateScore() {
+	public int updateScore(Long storeID, Float score) {
 		Connection connection = getConnection();
 		String sql = "update store set score=? where storeID=?";
 		PreparedStatement pStatement = null;
+		int resultSet = 0;
 		try {
 			pStatement = connection.prepareStatement(sql);
-			pStatement.setFloat(1, Float.valueOf((float) 0.3));
-			pStatement.setInt(2, 2);
-			int resultSet = pStatement.executeUpdate();
+			pStatement.setFloat(1, score);
+			pStatement.setLong(2, storeID);
+			resultSet = pStatement.executeUpdate();
 			if (resultSet != 0) {
 				System.out.println("update score success");
 			}
@@ -144,27 +156,25 @@ public class StoreDAO extends DaoBase {
 			e.printStackTrace();
 		}
 		release(connection, pStatement, null);
+		return resultSet;
 	}
-	
-	@Test
-	public void delectByStoreID() {
-		Long storeID=(long) 2;
+
+	public int delectByStoreID(Long storeID) {
 		Connection connection = getConnection();
 		String sql = "delete from store where storeID=?";
 		PreparedStatement pStatement = null;
-		
+		int resultSet = 0;
 		try {
 			pStatement = connection.prepareStatement(sql);
 			pStatement.setLong(1, storeID);
-			int resultSet = pStatement.executeUpdate();
-			if(resultSet==1)
-			{
+			resultSet = pStatement.executeUpdate();
+			if (resultSet == 1) {
 				System.out.println("delete store success");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		release(connection, pStatement, null);
-		
+		return resultSet;
 	}
 }
