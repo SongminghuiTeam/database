@@ -109,4 +109,25 @@ public class TopicDAO extends DaoBase {
 		}
 		release(connection, pStatement, resultSet);
 	}
+	@Test
+	public void delectByTopicID() {
+		Long topicID=(long) 2;
+		Connection connection = getConnection();
+		String sql = "delete from topic where topicID=?";
+		PreparedStatement pStatement = null;
+		
+		try {
+			pStatement = connection.prepareStatement(sql);
+			pStatement.setLong(1, topicID);
+			int resultSet = pStatement.executeUpdate();
+			if(resultSet==1)
+			{
+				System.out.println("delete topic success");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		release(connection, pStatement, null);
+		
+	}
 }

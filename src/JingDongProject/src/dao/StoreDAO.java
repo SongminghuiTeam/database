@@ -134,7 +134,7 @@ public class StoreDAO extends DaoBase {
 		PreparedStatement pStatement = null;
 		try {
 			pStatement = connection.prepareStatement(sql);
-			pStatement.setFloat(1, Float.valueOf(5));
+			pStatement.setFloat(1, Float.valueOf((float) 0.3));
 			pStatement.setInt(2, 2);
 			int resultSet = pStatement.executeUpdate();
 			if (resultSet != 0) {
@@ -145,5 +145,26 @@ public class StoreDAO extends DaoBase {
 		}
 		release(connection, pStatement, null);
 	}
-
+	
+	@Test
+	public void delectByStoreID() {
+		Long storeID=(long) 2;
+		Connection connection = getConnection();
+		String sql = "delete from store where storeID=?";
+		PreparedStatement pStatement = null;
+		
+		try {
+			pStatement = connection.prepareStatement(sql);
+			pStatement.setLong(1, storeID);
+			int resultSet = pStatement.executeUpdate();
+			if(resultSet==1)
+			{
+				System.out.println("delete store success");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		release(connection, pStatement, null);
+		
+	}
 }
