@@ -12,22 +12,13 @@ import domain.Comment;
 
 public class CommentDAO extends DaoBase{
 
-	@Test
-	public void insert(){
+	/**
+	 * 添加评论
+	 * @param comment
+	 */
+	public void insert(Comment comment){
 		Connection connection=null;
-		PreparedStatement pStatement=null;
-		//获取当前时间
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Date date=new Date();
-		String time = df.format(date);
-		
-		Comment comment=new Comment();
-		comment.setCommentTime(time);
-		comment.setContent("666666666");
-		comment.setScore(5);
-		comment.setOrderID((long)3);
-		comment.setProductID((long)1);
-		
+		PreparedStatement pStatement=null;		
 		try {
 			connection=getConnection();
 			String sql="insert into comment(commentTime,content,score,orderID,productID) values(?,?,?,?,?)";
@@ -36,8 +27,7 @@ public class CommentDAO extends DaoBase{
 			pStatement.setString(2, comment.getContent());
 			pStatement.setInt(3, comment.getScore());
 			pStatement.setLong(4, comment.getOrderID());
-			pStatement.setLong(5, comment.getProductID());
-			
+			pStatement.setLong(5, comment.getProductID());		
 			int rows = pStatement.executeUpdate();
 			if(rows>0) {
 				System.out.println("insert successfully!");
@@ -52,17 +42,16 @@ public class CommentDAO extends DaoBase{
 		}
 	}
 	
+	
 	/**
 	 * 按照产品ID查找某个产品的所有评论
+	 * @param productID
 	 */
-	@Test
-	public void queryByProductID() {
+	public void queryByProductID(Long productID) {
 		Connection connection=null;
 		PreparedStatement pStatement=null;
 		ResultSet resultset=null;	
-		
 		Comment comment=new Comment();
-		Long productID=(long)1;
 		try {
 			connection=getConnection();
 			String sql="select * from comment where productID=? and ispassed=?";
@@ -87,8 +76,7 @@ public class CommentDAO extends DaoBase{
 				while(resultset2.next()) {
 					userID=resultset2.getString("userID");
 					break;
-				}		
-				
+				}				
 				System.out.print(comment.getCommentID()+"\t");
 				System.out.print(userID+"\t");
 				System.out.print(comment.getCommentTime()+"\t");
@@ -100,5 +88,28 @@ public class CommentDAO extends DaoBase{
 		} finally {
 			release(connection, pStatement, resultset);
 		}	
+	}
+	
+	
+	@Test
+	public void test() {
+		//测试 insert
+		Comment comment=new Comment();
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date date=new Date();
+		String time = df.format(date);			
+		comment.setCommentTime(time);
+		comment.setContent("嗯，商品很不错，给个赞！");
+		comment.setScore(5);
+		comment.setOrderID((long)2);
+		comment.setProductID((long)2);
+		insert(comment);
+		
+		//测试queryByProductID
+		/*Long productID=(long)2;
+		queryByProductID(productID);*/
+		
+		
+		
 	}
 }
