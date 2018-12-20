@@ -1,10 +1,10 @@
 package dao;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import org.junit.Test;
-
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
@@ -52,10 +52,12 @@ public class UserDAO extends DaoBase{
 		}
 	}
 	
-	public void search(String userID) {
+	public ArrayList<User> search(String userID) {
 		Connection conn = null;
 		PreparedStatement pStatement = null;
 		ResultSet rs = null;
+		
+		ArrayList<User> users = new ArrayList<User>();
 		
 		try {
 			conn = getConnection();
@@ -66,9 +68,13 @@ public class UserDAO extends DaoBase{
 			rs = pStatement.executeQuery();
 			
 			if(rs.next()) {
-				System.out.println("userID:" + rs.getString("userID") + "   password:" + rs.getString("password"));
-				System.out.println("mail:" + rs.getString("mail") + "   phone:" + rs.getString("phone"));
-				System.out.print("\n");
+				User user = new User();
+				user.setUserID(rs.getString("userID"));
+				user.setPassword(rs.getString("password"));
+				user.setMail(rs.getString("mail"));
+				user.setPhone(rs.getString("phone"));
+				
+				users.add(user);
 			}
 			else {
 				System.out.println("no such user");
@@ -83,6 +89,8 @@ public class UserDAO extends DaoBase{
 				e.printStackTrace();
 			}
 		}
+		
+		return users;
 	}
 	
 	public void update(String userID,User user) {
@@ -162,16 +170,40 @@ public class UserDAO extends DaoBase{
 	public void Test() {
 		User user = new User("heyulin", "13602339963", "yolanehe@163.com", "yolane0401");
 		//insert(user);
-		search("heyulin");
-		search("cwj");
-		search("katherine");
+		ArrayList<User> users1 = search("heyulin");
+		for(int i = 0;i < users1.size();i++) {
+			System.out.println("userID:" + users1.get(i).getUserID() + "   password:" + users1.get(i).getPassword()
+					 + "   mail:" + users1.get(i).getMail() + "   phone:" + users1.get(i).getPhone());
+		}
+		ArrayList<User> users2 = search("cwj");
+		for(int i = 0;i < users2.size();i++) {
+			System.out.println("userID:" + users2.get(i).getUserID() + "   password:" + users2.get(i).getPassword()
+					 + "   mail:" + users2.get(i).getMail() + "   phone:" + users2.get(i).getPhone());
+		}
+		ArrayList<User> users3 = search("katherine");
+		for(int i = 0;i < users3.size();i++) {
+			System.out.println("userID:" + users3.get(i).getUserID() + "   password:" + users3.get(i).getPassword()
+					 + "   mail:" + users3.get(i).getMail() + "   phone:" + users3.get(i).getPhone());
+		}
 		
 		User newUser = new User("heyulin", "15113158871", "294813616@qq.com", "123456");
 		// update("heyulin", newUser);
-		search("heyulin");
-		search("cwj");
-		search("katherine");
+		ArrayList<User> users4 = search("heyulin");
+		for(int i = 0;i < users4.size();i++) {
+			System.out.println("userID:" + users4.get(i).getUserID() + "   password:" + users4.get(i).getPassword()
+					 + "   mail:" + users4.get(i).getMail() + "   phone:" + users4.get(i).getPhone());
+		}
+		ArrayList<User> users5 = search("cwj");
+		for(int i = 0;i < users5.size();i++) {
+			System.out.println("userID:" + users5.get(i).getUserID() + "   password:" + users5.get(i).getPassword()
+					 + "   mail:" + users5.get(i).getMail() + "   phone:" + users5.get(i).getPhone());
+		}
+		ArrayList<User> users6 = search("katherine");
+		for(int i = 0;i < users6.size();i++) {
+			System.out.println("userID:" + users6.get(i).getUserID() + "   password:" + users6.get(i).getPassword()
+					 + "   mail:" + users6.get(i).getMail() + "   phone:" + users6.get(i).getPhone());
+		}
 		
-		delete("heyulin");
+		//delete("heyulin");
 	}
 }

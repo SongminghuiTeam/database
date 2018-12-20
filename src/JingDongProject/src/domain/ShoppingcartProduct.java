@@ -8,7 +8,9 @@ public class ShoppingcartProduct {
 		this.shoppingcartID = shoppingcartID;
 		this.productID = productID;
 	}
-
+	
+	public ShoppingcartProduct() {}
+	
 	public Long getShoppingcartID() {
 		return shoppingcartID;
 	}
