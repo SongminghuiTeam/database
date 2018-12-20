@@ -16,40 +16,49 @@ public class DetailedDAO extends DaoBase{
 		PreparedStatement pStatement = null;
 		ResultSet rs = null;
 		
-		Detailed detailed = new Detailed("chenwanjing", "daurum", "1998-7-20" , "陈婉菁", "350702199807201826",(long)20);
+		Detailed detailed = new Detailed("heyulin", "yolanehe", "女", "1998-4-1" , "何钰霖", "440402199804019047");
 
 		try {
 			conn = getConnection();
-			String sql = null;
-			if(!detailed.getGender().equals("empty")) {
-				sql = "insert into detailed values(?,?,?,?,?,?,?)";
-				pStatement = conn.prepareStatement(sql);
-				pStatement.setString(1, detailed.getUserID());
-				pStatement.setString(2, detailed.getNickName());
-				pStatement.setString(3, detailed.getGender());
-				pStatement.setString(4, detailed.getBirthday());
-				pStatement.setString(5, detailed.getTrueName());
-				pStatement.setString(6, detailed.getIdNumber());
-				pStatement.setLong(7, detailed.getJdBean());
+			String sql = "select * from user where userID=?";
+			pStatement = conn.prepareStatement(sql);
+			pStatement.setString(1, detailed.getUserID());
+			rs = pStatement.executeQuery();
+			
+			if(rs.next()) {
+				if(!detailed.getGender().equals("empty")) {
+					sql = "insert into detailed values(?,?,?,?,?,?,?)";
+					pStatement = conn.prepareStatement(sql);
+					pStatement.setString(1, detailed.getUserID());
+					pStatement.setString(2, detailed.getNickName());
+					pStatement.setString(3, detailed.getGender());
+					pStatement.setString(4, detailed.getBirthday());
+					pStatement.setString(5, detailed.getTrueName());
+					pStatement.setString(6, detailed.getIdNumber());
+					pStatement.setLong(7, detailed.getJdBean());
+				}
+				else {
+					sql = "insert into detailed(userID,nickName,birthday,trueName,idNumber,jdBean) values(?,?,?,?,?,?)";
+					pStatement = conn.prepareStatement(sql);
+					pStatement.setString(1, detailed.getUserID());
+					pStatement.setString(2, detailed.getNickName());
+					pStatement.setString(3, detailed.getBirthday());
+					pStatement.setString(4, detailed.getTrueName());
+					pStatement.setString(5, detailed.getIdNumber());
+					pStatement.setLong(6, detailed.getJdBean());
+				}
+				
+				int row =  pStatement.executeUpdate();
+				
+				if(row > 0) {
+					System.out.println("insert successfully");
+				}
+				else {
+					System.out.println("insert failed");
+				}
 			}
 			else {
-				sql = "insert into detailed(userID,nickName,birthday,trueName,idNumber,jdBean) values(?,?,?,?,?,?)";
-				pStatement = conn.prepareStatement(sql);
-				pStatement.setString(1, detailed.getUserID());
-				pStatement.setString(2, detailed.getNickName());
-				pStatement.setString(3, detailed.getBirthday());
-				pStatement.setString(4, detailed.getTrueName());
-				pStatement.setString(5, detailed.getIdNumber());
-				pStatement.setLong(6, detailed.getJdBean());
-			}
-			
-			int row =  pStatement.executeUpdate();
-			
-			if(row > 0) {
-				System.out.println("insert successfully");
-			}
-			else {
-				System.out.println("insert failed");
+				System.out.println("no user named " + detailed.getUserID());
 			}
 			
 		}catch(Exception sqlException) {
