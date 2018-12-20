@@ -9,78 +9,65 @@ import domain.Category;
 public class CategoryDAO extends DaoBase{
 	
 	//增
-	@org.junit.Test
-	public void insert() {
+	public void insert(Category category) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;		
-		
-		Category category = new Category();
-		category.setCategoryName("家电");
+
 		try {
 			conn =  this.getConnection();
-			String sql = "insert into Category (categoryName) values (?)";
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, category.getCategoryName());
-		
-			int flag = pstmt.executeUpdate();
+			String sql = null;
+			if(category.getParentID() == null) {
+				sql = "insert into category (categoryName) values (?)";
+				pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1, category.getCategoryName());				
+			}	
+			else {
+				sql = "insert into category (categoryName, parentID) values (?, ?)";
+				pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1, category.getCategoryName());		
+				pstmt.setLong(2, category.getParentID());
+			}
 			
-			if(flag > 0) {
+			if(pstmt.executeUpdate() > 0) {
 				System.out.println("Insert successfully");
 			}
 			else {
 				System.out.println("Insert failed");
 			}
 			
-			this.release(conn, pstmt, null);
-			
 		}catch(SQLException e) {
 			e.printStackTrace();
+		}finally {
+			this.release(conn, pstmt, null);
 		}
 	}
 	
-	//ͨ通过categoryName查找categoryID
-	public Long queryCategoryID(String categoryName) {
+	//删
+	public void delete(Long categoryID) {
 		Connection conn = null;
-		PreparedStatement pstmt = null;	
-		ResultSet rs = null;
-		
-		Long categoryID = (long)-1;
+		PreparedStatement pstmt = null;
 		
 		try {
-			conn =  this.getConnection();
-			String sql = "select Category.categoryID from Category where Category.categoryName=?";
+			conn = this.getConnection();
+			
+			String sql = "delete from category where categoryID = ?";
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, categoryName);
-			rs = pstmt.executeQuery();
-						
-			while(rs.next()) {
-				categoryID=rs.getLong(1);
-			}
-
-			this.release(conn, pstmt, rs);
+			pstmt.setLong(1, categoryID);
+			pstmt.executeUpdate();
+			
+			System.out.println("Delete successfully");
 			
 		}catch(SQLException e) {
 			e.printStackTrace();
+		}finally {
+			this.release(conn, pstmt, null);
 		}
-		return categoryID;
 	}
 	
-	//改
-	@org.junit.Test
-	public void update() {
+	//改categoryName
+	public void updateCategoryName(Long categoryID, String newCategoryName) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;	
-		
-		String oldCategoryName = "家电";
-		String newCategoryName = "电器";
-		
-		CategoryDAO cDAO = new CategoryDAO();
-		Long categoryID = cDAO.queryCategoryID(oldCategoryName);
-		
-		if(categoryID == -1) {			
-			System.out.println("Update failed");
-			return;
-		}
 		
 		try {
 			conn = this.getConnection();
@@ -95,77 +82,121 @@ public class CategoryDAO extends DaoBase{
 			else {
 				System.out.println("Update failed");
 			}
-			
-			this.release(conn, pstmt, null);			
+					
 		}catch(SQLException e) {
 			e.printStackTrace();
+		}finally {
+			this.release(conn, pstmt, null);
 		}
 	}
 	
-	//查
-	@org.junit.Test
-	public void search() {
+	//改parentID
+	public void updateParentID(Long categoryID, Long newParentID) {
 		Connection conn = null;
-		PreparedStatement pstmt = null;
+		PreparedStatement pstmt = null;	
+		
+		try {
+			conn = this.getConnection();
+			String sql = "update Category set parentID = ? where categoryID = ?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setLong(1, newParentID);
+			pstmt.setLong(2, categoryID);
+			
+			if(pstmt.executeUpdate() > 0) {
+				System.out.println("Update successfully");
+			}
+			else {
+				System.out.println("Update failed");
+			}			
+			
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}finally {
+			this.release(conn, pstmt, null);
+		}
+	}
+	
+		
+	//ͨ通过categoryName查找categoryID
+	public Long queryCategoryID(String categoryName) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;	
 		ResultSet rs = null;
 		
-		String categoryName = "电器";
-		CategoryDAO caDAO = new CategoryDAO();
-		ClassificationDAO cl = new ClassificationDAO();
-		Long categoryID = caDAO.queryCategoryID(categoryName);
-		
-		if(categoryID == -1) {			
-			System.out.println("Search failed");
-			return;
-		}
+		Long categoryID = (long)-1;
 		
 		try {
-			conn = this.getConnection();
-			String sql = "select classificationName from Classification where categoryID=?";
+			conn =  this.getConnection();
+			String sql = "select categoryID from category where categoryName=?";
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setLong(1, categoryID);
-			
-			System.out.println(categoryName + "：");
+			pstmt.setString(1, categoryName);
 			rs = pstmt.executeQuery();
+						
 			while(rs.next()) {
-				String classificationName = rs.getString(1);
-				cl.search(classificationName);
+				categoryID = rs.getLong(1);
 			}
-			this.release(conn, pstmt, rs);
+
 		}catch(SQLException e) {
 			e.printStackTrace();
+		}finally {
+			this.release(conn, pstmt, rs);
 		}
+		return categoryID;
 	}
 	
-	//删
-	@org.junit.Test
-	public void delete() {
+	//ͨ通过categoryName查找parentID
+	public Long queryParentID(String categoryName) {
 		Connection conn = null;
-		PreparedStatement pstmt = null;
+		PreparedStatement pstmt = null;	
+		ResultSet rs = null;
 		
-		String categoryName = "服装";
-		
-		CategoryDAO cDAO = new CategoryDAO();
-		Long categoryID = cDAO.queryCategoryID(categoryName);
-		
-		if(categoryID == -1) {			
-			System.out.println("no categoryName " + categoryName);
-			return;
-		}
+		Long parentID = (long)-1;
 		
 		try {
-			conn = this.getConnection();
-			
-			String sql = "delete from Category where categoryID = ?";
+			conn =  this.getConnection();
+			String sql = "select parentID from category where categoryName=?";
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setLong(1, categoryID);
-			pstmt.executeUpdate();
-			
-			System.out.println("Delete successfully");
-			this.release(conn, pstmt, null);
-			
+			pstmt.setString(1, categoryName);
+			rs = pstmt.executeQuery();
+						
+			while(rs.next()) {
+				parentID = rs.getLong(1);
+			}
+
 		}catch(SQLException e) {
 			e.printStackTrace();
+		}finally {
+			this.release(conn, pstmt, rs);
 		}
+		return parentID;	
+	}
+	
+	@org.junit.Test
+	public void Test() {
+		
+		Category c1= new Category();
+		c1.setCategoryName("家用电器");
+		insert(c1);
+		
+		updateCategoryName(queryCategoryID("家用电器"), "家电");
+		
+		Category c2= new Category();
+		c2.setCategoryName("数码");
+		insert(c2);		
+
+		Category c3 = new Category();
+		c3.setCategoryName("电视机");
+		c3.setParentID(queryCategoryID("数码"));
+		insert(c3);
+		
+		Category c4 = new Category();
+		c4.setCategoryName("冰箱");
+		c4.setParentID(queryCategoryID("家电"));
+		insert(c4);
+		
+		updateParentID(queryCategoryID("电视机"),queryCategoryID("家电"));
+		
+		delete(queryCategoryID("冰箱"));
+
 	}
 }

@@ -1,12 +1,13 @@
 package domain;
 
 public class Category {
-	private Integer categoryID;
+	private Long categoryID;
 	private String categoryName;
-	public Integer getCategoryID() {
+	private Long parentID;
+	public Long getCategoryID() {
 		return categoryID;
 	}
-	public void setCategoryID(Integer categoryID) {
+	public void setCategoryID(Long categoryID) {
 		this.categoryID = categoryID;
 	}
 	public String getCategoryName() {
@@ -14,6 +15,12 @@ public class Category {
 	}
 	public void setCategoryName(String categoryName) {
 		this.categoryName = categoryName;
+	}
+	public Long getParentID() {
+		return parentID;
+	}
+	public void setParentID(Long parentID) {
+		this.parentID = parentID;
 	}
 	
 }
