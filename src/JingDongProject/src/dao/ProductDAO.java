@@ -9,40 +9,36 @@ import org.junit.Test;
 import domain.Product;
 
 public class ProductDAO extends DaoBase {
-	@Test
-	public void insert() {
+	public void insert(Product product) {
 		Connection conn = null;
 		PreparedStatement pStatement = null;
 		ResultSet rs = null;
 		
-		//Product product = new Product("耳机", (float) 0.3, "X12 2 4.2", "双耳无线蓝牙迷你入耳式运动耳机", (long)1, (long)1, (long)10);
-		Product product = new Product("鼠标", (float) 0.8, "USB 1600dpi 2.4GHz", "AOC无线笔记本鼠标", (long)2, (long)1);
-	
 		try {
 			conn = getConnection();
 			String sql = "";
 			if(product.getJdBean() == 0) {
-				sql = "insert into product(productName,weight,visitVolume,model,description,storeID,classificationID) values(?,?,?,?,?,?,?)";
+				sql = "insert into product(productName,weight,visitVolume,model,description,categoryID,price) values(?,?,?,?,?,?,?)";
 				pStatement = conn.prepareStatement(sql);
 				pStatement.setString(1, product.getProductName());
 				pStatement.setFloat(2, product.getWeight());
 				pStatement.setLong(3, product.getVisitVolume());
 				pStatement.setString(4, product.getModel());
 				pStatement.setString(5, product.getDescription());
-				pStatement.setLong(6, product.getStoreID());
-				pStatement.setLong(7, product.getClassificationID());
+				pStatement.setLong(6, product.getCategoryID());
+				pStatement.setFloat(7, product.getPrice());
 			}
 			else {
-				sql = "insert into product(productName,weight,visitVolume,model,description,storeID,classificationID,jdBean) values(?,?,?,?,?,?,?,?)";
+				sql = "insert into product(productName,weight,visitVolume,model,description,jdBean,categoryID,price) values(?,?,?,?,?,?,?,?)";
 				pStatement = conn.prepareStatement(sql);
 				pStatement.setString(1, product.getProductName());
 				pStatement.setFloat(2, product.getWeight());
 				pStatement.setLong(3, product.getVisitVolume());
 				pStatement.setString(4, product.getModel());
 				pStatement.setString(5, product.getDescription());
-				pStatement.setLong(6, product.getStoreID());
-				pStatement.setLong(7, product.getClassificationID());
-				pStatement.setLong(8, product.getJdBean());
+				pStatement.setLong(6, product.getJdBean());
+				pStatement.setLong(7, product.getCategoryID());
+				pStatement.setFloat(8, product.getPrice());
 			}
 			
 			int row =  pStatement.executeUpdate();
@@ -64,13 +60,10 @@ public class ProductDAO extends DaoBase {
 		}
 	}
 	
-	@Test
-	public void search() {
+	public void search(String productName) {
 		Connection conn = null;
 		PreparedStatement pStatement = null;
 		ResultSet rs = null;
-		
-		String productName = "嗅嗅";
 		
 		try {
 			conn = getConnection();
@@ -81,36 +74,11 @@ public class ProductDAO extends DaoBase {
 			if(rs.next()) {
 				System.out.println("search successfully!" + "\n");
 				while(true) {
-					/*Long classificationID = rs.getLong("classificationID");
-					Long storeID = rs.getLong("storeID");
-					System.out.println("classificationID:" + classificationID);
-					System.out.println("storeID:" + storeID);*/
-					
-					/*sql = "select store.storeName, classification.classificationName, category.categoryName from store, classification, category"
-							+ " where classification.categoryID=category.categoryID and classification.classificationID=? and store.storeID=?";
-					pStatement = conn.prepareStatement(sql);
-					pStatement.setLong(1, classificationID);
-					pStatement.setLong(2, storeID);
-					
-					ResultSet rs1 = pStatement.executeQuery();
-					String storeName = rs1.getString("storeName");
-					String classificationName = rs1.getString("classificationName");
-					String categoryName = rs1.getString("categoryName");*/
-					
-					
-					System.out.println("productName:" + rs.getString("productName") + " price:" + rs.getFloat("price") + " weight:" +
-							rs.getFloat("weight") + " description:" + rs.getString("description") + " model:" + rs.getString("model"));
-					System.out.println("jdBean:" + rs.getLong("jdBean") + " visitVolume:" + rs.getLong("visitVolume"));
-					
-					//String storeName = searchStoreName(storeID);
-					//String classificationName =searchClassificationName(classificationID);
-					//String categoryName = searchCategoryName(classificationID);
-					//System.out.println("type:" + categoryName + "-" + classificationName);
-					//System.out.println("storeName:" + storeName);
-					Long classificationID = rs.getLong("classificationID");
-					Long storeID = rs.getLong("storeID");
-					System.out.println("classificationID:" + classificationID);
-					System.out.println("storeID:" + storeID);
+					System.out.println("productName:" + rs.getString("productName") + "   price:" + rs.getFloat("price") + "   weight:" +
+							rs.getFloat("weight"));
+					System.out.println("model:" + rs.getString("model"));
+					System.out.println("description:" + rs.getString("description"));
+					System.out.println("jdBean:" + rs.getLong("jdBean") + "   visitVolume:" + rs.getLong("visitVolume"));
 					
 					if(!rs.getBoolean("status")) {
 						System.out.println("缺货");
@@ -136,73 +104,66 @@ public class ProductDAO extends DaoBase {
 		}
 	}
 	
-	/*private String searchStoreName(Long storeID) {
+	public void update(Long productID,Product product) {
 		Connection conn = null;
 		PreparedStatement pStatement = null;
 		ResultSet rs = null;
 		
 		try {
 			conn = getConnection();
-			String sql = "select storeName from store where storeID=?";
+			String sql = "select * from product where productID=?";
 			pStatement = conn.prepareStatement(sql);
-			pStatement.setLong(1, storeID);
+			pStatement.setLong(1, productID);
 			
 			rs = pStatement.executeQuery();
-			
-			String storeName = rs.getString("storeName");
-			release(conn, pStatement, rs);
-			System.out.println("storeName:" + storeName);
-			return storeName;
+			if(rs.next()) {
+				sql = "update product set productName=?, weight=?, visitVolume=?, model=?, description=?, jdBean=?, price=? , categoryID=? where productID=?";
+				pStatement = conn.prepareStatement(sql);
+				pStatement.setString(1, product.getProductName());
+				pStatement.setFloat(2, product.getWeight());
+				pStatement.setLong(3, product.getVisitVolume());
+				pStatement.setString(4, product.getModel());
+				pStatement.setString(5, product.getDescription());
+				pStatement.setLong(6,product.getJdBean());
+				pStatement.setFloat(7, product.getPrice());
+				pStatement.setLong(8, product.getCategoryID());
+				pStatement.setLong(9, productID);
+				
+				int row = pStatement.executeUpdate();
+				
+				if(row > 0) {
+					System.out.println("update successfully!");
+				}
+				else {
+					System.out.println("update failed!");
+				}
+			}
+			else {
+				System.out.println("no such product");
+			}
 		}catch(Exception sqlException) {
 			sqlException.printStackTrace();
-			return null;
+		}finally {
+			try {
+				release(conn, pStatement, rs);
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
-	private String searchClassificationName(Long classificationID) {
-		Connection conn = null;
-		PreparedStatement pStatement = null;
-		ResultSet rs = null;
+	@Test
+	public void Test() {
+		Product newProduct = new Product("macbookPro", (float)1.7 , "13英寸 银色", "Apple/苹果 macbookPro 13英寸 双核Inter core i5 处理器 8G 银色 2560*1600 原封国行", (long)23, (float)10888);
+		Product product = new Product("", (float)0.01, "环球影城神奇动物在哪里电影正版周边", "神奇动物在哪里", (long)30 , (float)50);
+		//insert(newProduct);
 		
-		try {
-			conn = getConnection();
-			String sql = "select classificationName from store where classificationID=?";
-			pStatement = conn.prepareStatement(sql);
-			pStatement.setLong(1, classificationID);
-			
-			rs = pStatement.executeQuery();
-			
-			String classificationName = rs.getString("classificationName");
-			release(conn, pStatement, rs);
-			return classificationName;
-		}catch(Exception sqlException) {
-			sqlException.printStackTrace();
-			return null;
-		}
+		search("iPhone X");
+		search("macbook");
+		search("iPhone 8");
+		
+		Long productID = (long)5;
+		Product product2 = new Product("iPhone 8", (float)0.7 , "银色", "Apple/苹果 iPhone 8 256G 原封国行", (long)22, (float)5000);
+		update(productID, product2);
 	}
-	
-	private String searchCategoryName(Long classificationID) {
-		Connection conn = null;
-		PreparedStatement pStatement = null;
-		ResultSet rs = null;
-		
-		try {
-			conn = getConnection();
-			String sql = "select categoryName from classification, category where classification.categoryID=category.categoryID and classificationID=?";
-			
-			pStatement = conn.prepareStatement(sql);
-			pStatement.setLong(1, classificationID);
-			
-			rs = pStatement.executeQuery();
-			
-			String categoryName = rs.getString("categoryName");
-			release(conn, pStatement, rs);
-			return categoryName;
-		}catch(Exception sqlException) {
-			sqlException.printStackTrace();
-			return null;
-		}
-	}*/
-	
-	
 }

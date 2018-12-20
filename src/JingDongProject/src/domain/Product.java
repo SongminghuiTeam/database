@@ -7,32 +7,58 @@ public class Product {
 	private Long visitVolume;
 	private String model;
 	private String description;
-	private Long storeID;
-	private Long classificationID;
+	private Long categoryID;
 	private Long jdBean;
+	private boolean status;
+	private Float price;
 	
-	public Product(String productName, Float weight, String model, String description,
-			Long storeID, Long classificationID, Long jdBean) {
+	public Product(String productName, Float weight, String model, String description, Long categoryID, Long jdBean, Float price) {
 		this.productName = productName;
 		this.weight = weight;
 		this.visitVolume = (long)0;
 		this.model = model;
 		this.description = description;
-		this.storeID = storeID;
-		this.classificationID = classificationID;
+		this.categoryID = categoryID;
 		this.jdBean = jdBean;
+		this.status = true;
+		this.price = price;
 	}
 	
-	public Product(String productName, Float weight, String model, String description,
-			Long storeID, Long classificationID) {
+	public Product(String productName, Float weight, String model, String description, Long categoryID, Float price) {
 		this.productName = productName;
 		this.weight = weight;
 		this.visitVolume = (long)0;
 		this.model = model;
 		this.description = description;
-		this.storeID = storeID;
-		this.classificationID = classificationID;
+		this.categoryID = categoryID;
 		this.jdBean = (long)0;
+		this.status = true;
+		this.price = price;
+	}
+
+	
+	public Long getCategoryID() {
+		return categoryID;
+	}
+
+	public void setCategoryID(Long categoryID) {
+		this.categoryID = categoryID;
+	}
+
+	public Float getPrice() {
+		return price;
+	}
+
+	public void setPrice(Float price) {
+		this.price = price;
+	}
+
+	public boolean getStatus() {
+		return status;
+	}
+
+	public void setStatus(boolean status) {
+		this.status = status;
 	}
 
 	public Long getProductID() {
@@ -82,23 +108,7 @@ public class Product {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
-	public Long getStoreID() {
-		return storeID;
-	}
-	
-	public void setStoreID(Long storeID) {
-		this.storeID = storeID;
-	}
-	
-	public Long getClassificationID() {
-		return classificationID;
-	}
-	
-	public void setClassificationID(Long classificationID) {
-		this.classificationID = classificationID;
-	}
-	
+
 	public Long getJdBean() {
 		return jdBean;
 	}
