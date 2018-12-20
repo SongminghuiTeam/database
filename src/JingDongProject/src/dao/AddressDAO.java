@@ -11,21 +11,13 @@ import domain.Address;
 
 public class AddressDAO extends DaoBase{
 
-	@Test
-	public void insert(){
+	/**
+	 * 插入一条地址记录
+	 * @param address
+	 */
+	public void insert(Address address){
 		Connection connection=null;
-		PreparedStatement pStatement=null;
-		
-		Address address=new Address();
-		address.setUserID("hyl");
-		address.setProvince("北京");
-		address.setCity("北京");
-		address.setBlock("海淀");
-		address.setStreet("学院路");
-		address.setAddress("清华东路35号北京林业大学");
-		address.setReceiver("cwj");
-		address.setPhone("13121862811");
-		
+		PreparedStatement pStatement=null;	
 		try {
 			connection=getConnection();
 			String sql="insert into address(userID,province,city,block,street,address,receiver,phone) values(?,?,?,?,?,?,?,?)";
@@ -55,15 +47,14 @@ public class AddressDAO extends DaoBase{
 	
 	/**
 	 * 根据userID查出该用户的所有地址信息
+	 * @param userID
 	 */
-	@Test
-	public void queryByUserID() {
+	public void queryAllAddress(String userID) {
 		Connection connection=null;
 		PreparedStatement pStatement=null;
-		ResultSet resultset=null;	
-		
+		ResultSet resultset=null;		
 		Address address=new Address();
-		String userID="hyl";
+		
 		try {
 			connection=getConnection();
 			String sql="select * from address where userID=?";
@@ -102,24 +93,61 @@ public class AddressDAO extends DaoBase{
 	}
 	
 	/**
-	 * 根据userID和指定的地址ID修改user的某个地址
+	 * 根据userID和addressID查找某个user的某条地址记录
+	 * @param userID
+	 * @param addressID
+	 * @return
 	 */
-	@Test
-	public void updateByUserID() {
+	public Address queryOneAddress(String userID,Long addressID) {
+		Connection connection=null;
+		PreparedStatement pStatement=null;
+		ResultSet resultset=null;			
+		Address address=new Address();
+		address.setAddressID(addressID);
+		address.setUserID(userID);
+		
+		try {
+			connection=getConnection();
+			String sql="select * from address where userID=? and addressID=?";
+			pStatement=connection.prepareStatement(sql);
+			pStatement.setString(1, userID);
+			pStatement.setLong(2, addressID);
+			resultset=pStatement.executeQuery();
+			while(resultset.next()) {		
+				address.setProvince(resultset.getString("province"));
+				address.setCity(resultset.getString("city"));
+				address.setBlock(resultset.getString("block"));
+				address.setStreet(resultset.getString("street"));
+				address.setAddress(resultset.getString("address"));
+				address.setReceiver(resultset.getString("receiver"));
+				address.setPhone(resultset.getString("phone"));
+				
+				System.out.print(userID+"\t");			
+				System.out.print(address.getProvince()+"省\t");
+				System.out.print(address.getCity()+"市\t");
+				System.out.print(address.getBlock()+"区\t");				
+				System.out.print(address.getStreet()+"街道\t");				
+				System.out.print(address.getAddress()+"\t");				
+				System.out.print(address.getReceiver()+"收\t");	
+				System.out.println(address.getPhone());
+				break;
+			}		
+			return address;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			release(connection, pStatement, resultset);
+		}	
+	}
+
+	/**
+	 * 根据传过来的address修改该条地址记录
+	 * @param addressOld
+	 */
+	public void updateAddress(Address address) {
 		Connection connection=null;
 		PreparedStatement pStatement=null;	
-		Address address=new Address();
-		
-		address.setUserID("hyl");//指定用户ID
-		address.setAddressID((long)1);//指定该用户的其中一个地址ID
-		
-		address.setProvince("广东");
-		address.setCity("珠海");
-		address.setBlock("海淀");
-		address.setStreet("XX");
-		address.setAddress("XXXXXXX");
-		address.setReceiver("壳子");
-		address.setPhone("17801122933");
 		
 		try {
 			connection=getConnection();
@@ -133,6 +161,7 @@ public class AddressDAO extends DaoBase{
 			pStatement.setString(5, address.getAddress());
 			pStatement.setString(6, address.getReceiver());
 			pStatement.setString(7, address.getPhone());
+			
 			pStatement.setString(8, address.getUserID());
 			pStatement.setLong(9, address.getAddressID());
 			
@@ -144,7 +173,7 @@ public class AddressDAO extends DaoBase{
 				System.out.println("update defeat!");
 			}
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			e.printStackTrace();
 		} finally {
 			release(connection, pStatement, null);
 		}
@@ -152,15 +181,12 @@ public class AddressDAO extends DaoBase{
 	
 	/**
 	 * 根据userID和指定的该user的addressID删除某条地址记录
+	 * @param userID
+	 * @param addressID
 	 */
-	@Test
-	public void deleteByUserID() {
+	public void deleteAddress(String userID,Long addressID) {
 		Connection connection=null;
-		PreparedStatement pStatement=null;	
-		
-		String userID="hyl";
-		Long addressID=(long)1;
-		
+		PreparedStatement pStatement=null;		
 		try {
 			connection=getConnection();
 			String sql="delete from address where userID=? and addressID=?";
@@ -181,8 +207,11 @@ public class AddressDAO extends DaoBase{
 		}
 	}
 	
+	
 	/**
 	 * 根据addressID查询userID
+	 * @param addressID
+	 * @return
 	 */
 	public String queryUserIDByAddressID(Long addressID) {
 		Connection connection=null;
@@ -207,4 +236,47 @@ public class AddressDAO extends DaoBase{
 		}
 		return userID;
 	}
+	
+	
+	@Test
+	public void test() {
+			
+		//测试insert
+		Address address=new Address();
+		address.setUserID("hyl");
+		address.setProvince("北京");
+		address.setCity("北京");
+		address.setBlock("海淀");
+		address.setStreet("学院路");
+		address.setAddress("清华东路35号北京林业大学");
+		address.setReceiver("cwj");
+		address.setPhone("13121862811");
+		insert(address);
+		
+		//测试queryAllByUserID
+		/*String userID="hyl";
+		queryAllAddress(userID);*/
+		
+		//测试queryByUserAndAddressID
+		/*Long addressID=(long)4;
+		String userID="lxk";
+		queryOneAddress(userID, addressID);*/
+		
+		//测试updateAddress
+		/*Address address2=queryOneAddress("hyl", (long)8);
+		address2.setProvince("北京");
+		address2.setCity("海淀");
+		updateAddress(address2);
+		System.out.println("after update:");
+		queryOneAddress("hyl", (long)8);*/
+		
+		//测试deleteByUserID
+		/*String userID="hyl";
+		Long addressID=(long)8;
+		deleteAddress(userID, addressID);*/
+		
+		//测试queryUserIDByAddressID
+		/*System.out.println(queryUserIDByAddressID((long)4));*/
+	}
+	
 }
