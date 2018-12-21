@@ -11,8 +11,7 @@ public class Detailed {
 	private String idNumber;
 	private Long jdBean;
 	
-	public Detailed(String userID, String nickName, String gender, String birthday, String trueName, String idNumber,
-			Long jdBean) {
+	public Detailed(String userID, String nickName, String gender, String birthday, String trueName, String idNumber) {
 		super();
 		this.userID = userID;
 		this.nickName = nickName;
@@ -20,11 +19,10 @@ public class Detailed {
 		this.birthday = birthday;
 		this.trueName = trueName;
 		this.idNumber = idNumber;
-		this.jdBean = jdBean;
+		this.jdBean = (long)0;
 	}
 	
-	public Detailed(String userID, String nickName, String birthday, String trueName, String idNumber,
-			Long jdBean) {
+	public Detailed(String userID, String nickName, String birthday, String trueName, String idNumber) {
 		super();
 		this.userID = userID;
 		this.nickName = nickName;
@@ -32,7 +30,7 @@ public class Detailed {
 		this.birthday = birthday;
 		this.trueName = trueName;
 		this.idNumber = idNumber;
-		this.jdBean = jdBean;
+		this.jdBean = (long)0;
 	}
 	
 	public Detailed() {}
