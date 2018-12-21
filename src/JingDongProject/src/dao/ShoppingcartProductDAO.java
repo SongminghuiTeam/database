@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-import org.junit.Test;
 
 import org.junit.Test;
 
@@ -78,6 +77,35 @@ public class ShoppingcartProductDAO extends DaoBase{
 		return productIDs;
 	}
 	
+	public void delete(Long shoppingcartID) {
+		Connection conn = null;
+		PreparedStatement pStatement = null;
+		ResultSet rs = null;
+		
+		try {
+			conn = getConnection();
+			String sql = "delete from shoppingcartproduct where shoppingcartID=?";
+			pStatement = conn.prepareStatement(sql);
+			pStatement.setLong(1, shoppingcartID);
+			
+			int row = pStatement.executeUpdate();
+			if(row > 0) {
+				System.out.println("delete successfully");
+			}
+			else {
+				System.out.println("delete failed");
+			}
+		}catch(Exception sqlException) {
+			sqlException.printStackTrace();
+		}finally {
+			try {
+				release(conn, pStatement, rs);
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	@Test
 	public void Test() {
 		//ShoppingcartProduct shoppingcartProduct1 = new ShoppingcartProduct((long)2, (long)7);
@@ -95,5 +123,7 @@ public class ShoppingcartProductDAO extends DaoBase{
 				System.out.println("productID:" + productIDs.get(i));
 			}
 		}
+		
+		delete((long)1);
 	}
 }
