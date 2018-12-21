@@ -19,7 +19,7 @@ public class ProductDAO extends DaoBase {
 			conn = getConnection();
 			String sql = "";
 			if(product.getJdBean() == 0) {
-				sql = "insert into product(productName,weight,visitVolume,model,description,categoryID,price) values(?,?,?,?,?,?,?)";
+				sql = "insert into product(productName,weight,visitVolume,model,description,categoryID,price,storeID) values(?,?,?,?,?,?,?,?)";
 				pStatement = conn.prepareStatement(sql);
 				pStatement.setString(1, product.getProductName());
 				pStatement.setFloat(2, product.getWeight());
@@ -28,9 +28,10 @@ public class ProductDAO extends DaoBase {
 				pStatement.setString(5, product.getDescription());
 				pStatement.setLong(6, product.getCategoryID());
 				pStatement.setFloat(7, product.getPrice());
+				pStatement.setLong(8, product.getStoreID());
 			}
 			else {
-				sql = "insert into product(productName,weight,visitVolume,model,description,jdBean,categoryID,price) values(?,?,?,?,?,?,?,?)";
+				sql = "insert into product(productName,weight,visitVolume,model,description,jdBean,categoryID,price,storeID) values(?,?,?,?,?,?,?,?,?)";
 				pStatement = conn.prepareStatement(sql);
 				pStatement.setString(1, product.getProductName());
 				pStatement.setFloat(2, product.getWeight());
@@ -40,6 +41,7 @@ public class ProductDAO extends DaoBase {
 				pStatement.setLong(6, product.getJdBean());
 				pStatement.setLong(7, product.getCategoryID());
 				pStatement.setFloat(8, product.getPrice());
+				pStatement.setLong(9, product.getStoreID());
 			}
 			
 			int row =  pStatement.executeUpdate();
@@ -86,6 +88,7 @@ public class ProductDAO extends DaoBase {
 					product.setJdBean(rs.getLong("jdBean"));
 					product.setVisitVolume(rs.getLong("visitVolume"));
 					product.setStatus(rs.getBoolean("status"));
+					product.setStoreID(rs.getLong("storeID"));
 					
 					products.add(product);
 		
@@ -123,7 +126,7 @@ public class ProductDAO extends DaoBase {
 			
 			rs = pStatement.executeQuery();
 			if(rs.next()) {
-				sql = "update product set productName=?, weight=?, visitVolume=?, model=?, description=?, jdBean=?, price=? , categoryID=? where productID=?";
+				sql = "update product set productName=?, weight=?, visitVolume=?, model=?, description=?, jdBean=?, price=? , categoryID=?, storeID=? where productID=?";
 				pStatement = conn.prepareStatement(sql);
 				pStatement.setString(1, product.getProductName());
 				pStatement.setFloat(2, product.getWeight());
@@ -133,7 +136,8 @@ public class ProductDAO extends DaoBase {
 				pStatement.setLong(6,product.getJdBean());
 				pStatement.setFloat(7, product.getPrice());
 				pStatement.setLong(8, product.getCategoryID());
-				pStatement.setLong(9, productID);
+				pStatement.setLong(9, product.getStoreID());
+				pStatement.setLong(10, productID);
 				
 				int row = pStatement.executeUpdate();
 				
@@ -160,9 +164,9 @@ public class ProductDAO extends DaoBase {
 	
 	@Test
 	public void Test() {
-		Product newProduct = new Product("macbookPro", (float)1.7 , "13英寸 银色", "Apple/苹果 macbookPro 13英寸 双核Inter core i5 处理器 8G 银色 2560*1600 原封国行", (long)23, (float)10888);
-		Product product = new Product("", (float)0.01, "环球影城神奇动物在哪里电影正版周边", "神奇动物在哪里", (long)30 , (float)50);
-		//insert(newProduct);
+		Product newProduct = new Product("macbookPro", (float)1.7 , "13英寸 银色", "Apple/苹果 macbookPro 13英寸 双核Inter core i5 处理器 8G 银色 2560*1600 原封国行", (long)23, (float)10888,(long) 3);
+		Product product = new Product("", (float)0.01, "环球影城神奇动物在哪里电影正版周边", "神奇动物在哪里", (long)30 , (float)50, (long)1);
+		// insert(newProduct);
 		
 		ArrayList<Product> products1 = search("iPhone X");
 		for(int i = 0;i < products1.size();i++) {
@@ -171,6 +175,7 @@ public class ProductDAO extends DaoBase {
 			System.out.println("model:" + products1.get(i).getWeight());
 			System.out.println("description:" + products1.get(i).getDescription());
 			System.out.print("jdBean:" + products1.get(i).getJdBean() + "   visitVolume:" + products1.get(i).getVisitVolume());
+			System.out.println("storeID:" + products1.get(i).getStoreID());
 			if(!products1.get(i).getStatus()) {
 				System.out.println("   缺货");
 			}
@@ -183,6 +188,7 @@ public class ProductDAO extends DaoBase {
 			System.out.println("model:" + products2.get(i).getWeight());
 			System.out.println("description:" + products2.get(i).getDescription());
 			System.out.println("jdBean:" + products2.get(i).getJdBean() + "   visitVolume:" + products2.get(i).getVisitVolume());
+			System.out.println("storeID:" + products2.get(i).getStoreID());
 			if(!products2.get(i).getStatus()) {
 				System.out.println("   缺货");
 			}
@@ -195,14 +201,15 @@ public class ProductDAO extends DaoBase {
 			System.out.println("model:" + products3.get(i).getWeight());
 			System.out.println("description:" + products3.get(i).getDescription());
 			System.out.println("jdBean:" + products3.get(i).getJdBean() + "   visitVolume:" + products3.get(i).getVisitVolume());
+			System.out.println("storeID:" + products3.get(i).getStoreID());
 			if(!products3.get(i).getStatus()) {
 				System.out.println("   缺货");
 			}
 			System.out.print("\n");
 		}
 		
-		Long productID = (long)5;
-		Product product2 = new Product("iPhone 8", (float)0.7 , "银色", "Apple/苹果 iPhone 8 256G 原封国行", (long)22, (float)5000);
-		//update(productID, product2);
+		Long productID = (long)6;
+		Product product2 = new Product("iPhone 8", (float)0.7 , "银色", "Apple/苹果 iPhone 8 256G 原封国行", (long)22, (float)5000, (long) 3);
+		update(productID, product2);
 	}
 }

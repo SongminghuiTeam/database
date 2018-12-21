@@ -11,8 +11,9 @@ public class Product {
 	private Long jdBean;
 	private boolean status;
 	private Float price;
+	private Long storeID;
 	
-	public Product(String productName, Float weight, String model, String description, Long categoryID, Long jdBean, Float price) {
+	public Product(String productName, Float weight, String model, String description, Long categoryID, Long jdBean, Float price, Long storeID) {
 		this.productName = productName;
 		this.weight = weight;
 		this.visitVolume = (long)0;
@@ -22,9 +23,10 @@ public class Product {
 		this.jdBean = jdBean;
 		this.status = true;
 		this.price = price;
+		this.storeID = storeID;
 	}
 	
-	public Product(String productName, Float weight, String model, String description, Long categoryID, Float price) {
+	public Product(String productName, Float weight, String model, String description, Long categoryID, Float price,Long storeID) {
 		this.productName = productName;
 		this.weight = weight;
 		this.visitVolume = (long)0;
@@ -34,10 +36,20 @@ public class Product {
 		this.jdBean = (long)0;
 		this.status = true;
 		this.price = price;
+		this.storeID = storeID;
 	}
 
 	public Product() {}
 	
+	
+	public Long getStoreID() {
+		return storeID;
+	}
+
+	public void setStoreID(Long storeID) {
+		this.storeID = storeID;
+	}
+
 	public Long getCategoryID() {
 		return categoryID;
 	}
