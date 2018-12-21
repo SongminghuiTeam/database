@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 import org.junit.Test;
 
@@ -71,10 +72,12 @@ public class DetailedDAO extends DaoBase{
 		}
 	}
 	
-	public void search(String username, String password) {
+	public ArrayList<Detailed> search(String username, String password) {
 		Connection conn = null;
 		PreparedStatement pStatement = null;
 		ResultSet rs = null;
+		
+		ArrayList<Detailed> detaileds = new ArrayList<Detailed>();
 		
 		try {
 			conn = getConnection();
@@ -92,11 +95,16 @@ public class DetailedDAO extends DaoBase{
 					rs = pStatement.executeQuery();
 					if(rs.next()) {
 						System.out.println("search successfully");
-						System.out.println("username:" + rs.getString("userID") + "   nickname:" + rs.getString("nickName") +  
-								"   jdBeans:" + rs.getLong("jdBean"));
-						System.out.println("gender:" + rs.getString("gender") + "   birthday:" + rs.getString("birthday"));
-						System.out.println("trueName:" + rs.getString("trueName") + "   ID:" + rs.getString("idNumber"));
-						System.out.print("\n");
+						Detailed detailed = new Detailed();
+						detailed.setUserID(rs.getString("userID"));
+						detailed.setNickName(rs.getString("nickName"));
+						detailed.setJdBean(rs.getLong("jdBean"));
+						detailed.setGender(rs.getString("gender"));
+						detailed.setBirthday(rs.getString("birthday"));
+						detailed.setTrueName(rs.getString("trueName"));
+						detailed.setIdNumber(rs.getString("idNumber"));
+
+						detaileds.add(detailed);
 					}
 					else {
 						System.out.println("search failed");
@@ -121,6 +129,8 @@ public class DetailedDAO extends DaoBase{
 				e.printStackTrace();
 			}
 		}
+		
+		return detaileds;
 	}
 	
 	public void Update(String userID,Detailed detailed){
@@ -136,16 +146,29 @@ public class DetailedDAO extends DaoBase{
 			
 			rs = pStatement.executeQuery();
 			if(rs.next()) {
-				sql = "update detailed set nickName=?, gender=?, birthday=?, trueName=?, idNumber=?, jdBean=? where userID=?";
-				pStatement = conn.prepareStatement(sql);
-				
-				pStatement.setString(1, detailed.getNickName());
-				pStatement.setString(2, detailed.getGender());
-				pStatement.setString(3, detailed.getBirthday());
-				pStatement.setString(4, detailed.getTrueName());
-				pStatement.setString(5, detailed.getIdNumber());
-				pStatement.setLong(6, detailed.getJdBean());
-				pStatement.setString(7, userID);
+				if(!detailed.getGender().equals("empty")) {
+					sql = "update detailed set nickName=?, gender=?, birthday=?, trueName=?, idNumber=?, jdBean=? where userID=?";
+					pStatement = conn.prepareStatement(sql);
+					
+					pStatement.setString(1, detailed.getNickName());
+					pStatement.setString(2, detailed.getGender());
+					pStatement.setString(3, detailed.getBirthday());
+					pStatement.setString(4, detailed.getTrueName());
+					pStatement.setString(5, detailed.getIdNumber());
+					pStatement.setLong(6, detailed.getJdBean());
+					pStatement.setString(7, userID);	
+				}
+				else {
+					sql = "update detailed set nickName=?, birthday=?, trueName=?, idNumber=?, jdBean=? where userID=?";
+					pStatement = conn.prepareStatement(sql);
+					
+					pStatement.setString(1, detailed.getNickName());
+					pStatement.setString(2, detailed.getBirthday());
+					pStatement.setString(3, detailed.getTrueName());
+					pStatement.setString(4, detailed.getIdNumber());
+					pStatement.setLong(5, detailed.getJdBean());
+					pStatement.setString(6, userID);
+				}
 				
 				int row = pStatement.executeUpdate();
 				
@@ -173,15 +196,39 @@ public class DetailedDAO extends DaoBase{
 	@Test
 	public void Test() {
 		Detailed detailed = new Detailed("heyulin", "yolanehe", "1998-04-01", "", "");
-		// insert(detailed);
+		insert(detailed);
 		
-		search("heyulin", "111111");
-		search("heyulin", "123456");
+		ArrayList<Detailed> detaileds1 = search("heyulin", "111111");
+		for(int i = 0;i < detaileds1.size();i++) {
+			System.out.println("userID:" + detaileds1.get(i).getUserID() + "   gender:" + detaileds1.get(i).getGender() + "    jdBean:" + detaileds1.get(i).getJdBean());
+			System.out.println("nickName:" + detaileds1.get(i).getGender() + "   birthday:" + detaileds1.get(i).getBirthday());
+			System.out.println("trueName:" + detaileds1.get(i).getTrueName() + "   idNumber:" + detaileds1.get(i).getIdNumber());
+			System.out.print("\n");
+		}
+		ArrayList<Detailed> detaileds2 = search("heyulin", "123456");
+		for(int i = 0;i < detaileds2.size();i++) {
+			System.out.println("userID:" + detaileds2.get(i).getUserID() + "   gender:" + detaileds2.get(i).getGender() + "    jdBean:" + detaileds2.get(i).getJdBean());
+			System.out.println("nickName:" + detaileds2.get(i).getGender() + "   birthday:" + detaileds2.get(i).getBirthday());
+			System.out.println("trueName:" + detaileds2.get(i).getTrueName() + "   idNumber:" + detaileds2.get(i).getIdNumber());
+			System.out.print("\n");
+		}
 		
 		Detailed newDetailed = new Detailed("heyulin", "yolane", "1998-04-01", "何钰霖", "440402199804019047");
 		Update("heyulin", newDetailed);
 		
-		search("heyulin", "111111");
-		search("heyulin", "123456");
+		ArrayList<Detailed> detaileds3 = search("heyulin", "111111");
+		for(int i = 0;i < detaileds3.size();i++) {
+			System.out.println("userID:" + detaileds3.get(i).getUserID() + "   gender:" + detaileds3.get(i).getGender() + "    jdBean:" + detaileds3.get(i).getJdBean());
+			System.out.println("nickName:" + detaileds3.get(i).getGender() + "   birthday:" + detaileds3.get(i).getBirthday());
+			System.out.println("trueName:" + detaileds3.get(i).getTrueName() + "   idNumber:" + detaileds3.get(i).getIdNumber());
+			System.out.print("\n");
+		}
+		ArrayList<Detailed> detaileds4 = search("heyulin", "123456");
+		for(int i = 0;i < detaileds4.size();i++) {
+			System.out.println("userID:" + detaileds4.get(i).getUserID() + "   gender:" + detaileds4.get(i).getGender() + "    jdBean:" + detaileds4.get(i).getJdBean());
+			System.out.println("nickName:" + detaileds4.get(i).getGender() + "   birthday:" + detaileds4.get(i).getBirthday());
+			System.out.println("trueName:" + detaileds4.get(i).getTrueName() + "   idNumber:" + detaileds4.get(i).getIdNumber());
+			System.out.print("\n");
+		}
 	}
 }
