@@ -15,16 +15,19 @@ public class StoreCollectStoreDAO extends DaoBase{
 	/**
 	 * 根据scollectID向某个收藏夹中添加店铺ID
 	 */
-	public void insert(Long scollectID,Long storeID) {
+	public int insert(Long scollectID,Long storeID) {
 		Connection connection=null;
-		PreparedStatement pStatement=null;	
+		PreparedStatement pStatement=null;
+		
+		int rows = 0;
+		
 		try {
 			connection=getConnection();
 			String sql="insert into storecollectstore values(?,?)";
 			pStatement=connection.prepareStatement(sql);
 			pStatement.setLong(1, scollectID);
 			pStatement.setLong(2, storeID);
-			int rows=pStatement.executeUpdate();
+			rows=pStatement.executeUpdate();
 			if(rows>0) {
 				System.out.println("insert successfully!");
 			}
@@ -36,6 +39,8 @@ public class StoreCollectStoreDAO extends DaoBase{
 		} finally {
 			release(connection, pStatement, null);
 		}
+		
+		return rows;
 	}
 	
 	/**
@@ -71,16 +76,19 @@ public class StoreCollectStoreDAO extends DaoBase{
 	/**
 	 * 根据scollectID删除某个收藏夹中的店铺ID
 	 */
-	public void deleteByScollectID(Long scollectID,Long storeID) {
+	public int deleteByScollectID(Long scollectID,Long storeID) {
 		Connection connection=null;
 		PreparedStatement pStatement=null;		
+		
+		int rows = 0;
+		
 		try {
 			connection=getConnection();
 			String sql="delete from storecollectstore where scollectID=? and storeID=?";
 			pStatement=connection.prepareStatement(sql);
 			pStatement.setLong(1, scollectID);
 			pStatement.setLong(2, storeID);
-			int rows=pStatement.executeUpdate();
+			rows=pStatement.executeUpdate();
 			if(rows>0) {
 				System.out.println("delete successfully!");
 			}
@@ -92,23 +100,26 @@ public class StoreCollectStoreDAO extends DaoBase{
 		} finally {
 			release(connection, pStatement, null);
 		}
+		
+		return rows;
 	}
 	
 	@Test
 	public void test() {
 		//测试insert
-		StoreCollectStore storeCollectStore=new StoreCollectStore();
-		storeCollectStore.setScollectID((long)1);
+		/*StoreCollectStore storeCollectStore=new StoreCollectStore();
+		storeCollectStore.setScollectID((long)9);
 		storeCollectStore.setStoreID((long)2);
-		insert(storeCollectStore.getScollectID(), storeCollectStore.getStoreID());
+		insert(storeCollectStore.getScollectID(), storeCollectStore.getStoreID());*/
 		
 		//测试searchByPcollectID
-		Long scollectID2=(long)1;
-		searchByScollectID(scollectID2);
+		/*Long scollectID2=(long)10;
+		searchByScollectID(scollectID2);*/
 		
 		//测试deleteByPcollectID
-		storeCollectStore.setScollectID((long)1);
-		storeCollectStore.setStoreID((long)2);
+		StoreCollectStore storeCollectStore=new StoreCollectStore();
+		storeCollectStore.setScollectID((long)9);
+		storeCollectStore.setStoreID((long)3);
 		deleteByScollectID(storeCollectStore.getScollectID(), storeCollectStore.getStoreID());
 	}
 }

@@ -11,9 +11,12 @@ import domain.OrderProduct;
 public class OrderProductDAO extends DaoBase {
 	
 	//增
-	public void insert(OrderProduct op) {
+	public int insert(OrderProduct op) {
 		Connection conn = null;
-		PreparedStatement pstmt = null;				
+		PreparedStatement pstmt = null;		
+		
+		int row = 0;
+		
 		try {
 			conn = this.getConnection();
 			String sql = "insert into orderproduct (orderID, productID) values (?, ?)";
@@ -21,7 +24,9 @@ public class OrderProductDAO extends DaoBase {
 			pstmt.setLong(1, op.getOrderID());
 			pstmt.setLong(2, op.getProductID());
 			
-			if(pstmt.executeUpdate() > 0) {
+			row =  pstmt.executeUpdate();
+			
+			if(row > 0) {
 				System.out.println("Insert successfully");
 			}
 			else {
@@ -33,6 +38,8 @@ public class OrderProductDAO extends DaoBase {
 		}finally {
 			this.release(conn, pstmt, null);
 		}
+		
+		return row;
 	}
 	
 	//根据orderID查询该订单的所有productID
@@ -64,25 +71,19 @@ public class OrderProductDAO extends DaoBase {
 	@org.junit.Test
 	public void Test() {
 		
-		OrderProduct op1 = new OrderProduct();
+		/*OrderProduct op1 = new OrderProduct();
 		op1.setOrderID((long)1);
 		op1.setProductID((long)1);
-		insert(op1);
+		insert(op1);*/
 		
-		OrderProduct op2 = new OrderProduct();
-		op2.setOrderID((long)1);
-		op2.setProductID((long)2);
-		insert(op2);
-		
-		OrderProduct op3 = new OrderProduct();
-		op3.setOrderID((long)1);
-		op3.setProductID((long)3);
-		insert(op3);
-		
-		
-		ArrayList<Long> productIDs =  queryByOrderID((long)1);
-		for(Long productID : productIDs) {
-			System.out.println(productID);
+		ArrayList<Long> productIDs =  queryByOrderID((long)2);
+		if(productIDs.size() == 0) {
+			System.out.println("search error");
+		}
+		else {
+			for(Long productID : productIDs) {
+				System.out.println(productID);
+			}
 		}
 	}
 }

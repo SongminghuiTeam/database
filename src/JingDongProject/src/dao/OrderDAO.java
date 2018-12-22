@@ -10,9 +10,11 @@ import domain.Order;
 
 public class OrderDAO extends DaoBase {
 	//增
-	public void insert(Order order) {
+	public int insert(Order order) {
 		Connection conn = null;
-		PreparedStatement pstmt = null;		
+		PreparedStatement pstmt = null;
+		
+		int row = 0;
 		
 		try {
 			conn =  this.getConnection();
@@ -22,7 +24,9 @@ public class OrderDAO extends DaoBase {
 			pstmt.setString(2, order.getOrderTime());
 			pstmt.setLong(3, order.getAddressID());
 			
-			if(pstmt.executeUpdate() > 0) {
+			row = pstmt.executeUpdate();
+			
+			if(row > 0) {
 				System.out.println("Insert successfully");
 			}
 			else {
@@ -34,12 +38,16 @@ public class OrderDAO extends DaoBase {
 		}finally {
 			this.release(conn, pstmt, null);
 		}
+		
+		return row;
 	}
 	
 	//删
-	public void delete(Long orderID) {
+	public int delete(Long orderID) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
+		
+		int row = 0;
 		
 		try {
 			conn = this.getConnection();
@@ -47,15 +55,22 @@ public class OrderDAO extends DaoBase {
 			String sql = "delete from `order` where orderID = ?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setLong(1, orderID);
-			pstmt.executeUpdate();
+			row = pstmt.executeUpdate();
 			
-			System.out.println("Delete successfully");
+			if(row > 0) {
+				System.out.println("Delete successfully");
+			}
+			else {
+				System.out.println("Delete error");
+			}
 			
 		}catch(SQLException e) {
 			e.printStackTrace();
 		}finally {
 			this.release(conn, pstmt, null);
-		}		
+		}	
+		
+		return row;
 	}
 	
 	@org.junit.Test
@@ -66,11 +81,11 @@ public class OrderDAO extends DaoBase {
 		Date date = new Date();
 		String orderTime = df.format(date);
 		order.setOrderTime(orderTime);
-		order.setAddressID((long)2);
+		order.setAddressID((long)9);
 		
-		insert(order);
+		//insert(order);
 		
-		delete((long)2);
+		delete((long)6);
 		
 	}
 }

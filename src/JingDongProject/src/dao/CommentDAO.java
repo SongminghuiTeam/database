@@ -18,9 +18,11 @@ public class CommentDAO extends DaoBase{
 	 * 添加评论
 	 * @param comment
 	 */
-	public void insert(Comment comment){
+	public int insert(Comment comment){
 		Connection connection=null;
-		PreparedStatement pStatement=null;		
+		PreparedStatement pStatement=null;	
+		
+		int rows = 0;
 		try {
 			connection=getConnection();
 			String sql="insert into comment(commentTime,content,score,orderID,productID) values(?,?,?,?,?)";
@@ -30,7 +32,7 @@ public class CommentDAO extends DaoBase{
 			pStatement.setInt(3, comment.getScore());
 			pStatement.setLong(4, comment.getOrderID());
 			pStatement.setLong(5, comment.getProductID());		
-			int rows = pStatement.executeUpdate();
+			rows = pStatement.executeUpdate();
 			if(rows>0) {
 				System.out.println("insert successfully!");
 			}
@@ -38,10 +40,12 @@ public class CommentDAO extends DaoBase{
 				System.out.println("insert defeat!");
 			}
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			e.printStackTrace();
 		} finally {
 			release(connection, pStatement, null);
 		}
+		
+		return rows;
 	}
 	
 	
@@ -102,7 +106,7 @@ public class CommentDAO extends DaoBase{
 	@Test
 	public void test() {
 		//测试 insert
-		Comment comment=new Comment();
+		/*Comment comment=new Comment();
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date date=new Date();
 		String time = df.format(date);			
@@ -110,14 +114,11 @@ public class CommentDAO extends DaoBase{
 		comment.setContent("嗯，商品很不错，给个赞！");
 		comment.setScore(5);
 		comment.setOrderID((long)2);
-		comment.setProductID((long)2);
-		insert(comment);
+		comment.setProductID((long)16);
+		insert(comment);*/
 		
 		//测试searchByProductID
-		Long productID=(long)2;
+		Long productID=(long)15;
 		searchByProductID(productID);
-		
-		
-		
 	}
 }

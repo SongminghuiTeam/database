@@ -14,20 +14,22 @@ public class ProductCollectDAO extends DaoBase{
 	 * 根据userID，为该user创建一个收藏夹
 	 * @param userID
 	 */
-	public void insertByUserID(String userID){
+	public int insertByUserID(String userID){
 		Connection connection=null;
 		PreparedStatement pStatement=null;
+		
+		int rows = 0;
+		
 		//先查出这个用户是否已经有产品收藏夹
 		if(searchByUserID(userID)!=null) {
 			System.out.println("该用户已有产品收藏夹，无需添加！");
-			return ;
 		}	
 		try {
 			connection=getConnection();
 			String sql="insert into productcollect(userID) values(?)";
 			pStatement=connection.prepareStatement(sql);
 			pStatement.setString(1, userID);
-			int rows = pStatement.executeUpdate();
+			rows = pStatement.executeUpdate();
 			if(rows>0) {
 				System.out.println("insert successfully!");
 			}
@@ -39,6 +41,8 @@ public class ProductCollectDAO extends DaoBase{
 		} finally {
 			release(connection, pStatement, null);
 		}
+		
+		return rows;
 	}
 	
 	/**
@@ -76,12 +80,11 @@ public class ProductCollectDAO extends DaoBase{
 	public void test() {
 		
 		//测试insert
-		String userID="lxk";
-		insertByUserID(userID);
+		/*String userID="songminghui";
+		insertByUserID(userID);*/
 		
 		//测试queryByUserID
-		String userID2="lxk";
+		String userID2="chenwanjing";
 		searchByUserID(userID2);
-
 	}
 }

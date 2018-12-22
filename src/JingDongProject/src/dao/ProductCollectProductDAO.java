@@ -15,16 +15,19 @@ public class ProductCollectProductDAO extends DaoBase{
 	/**
 	 * 根据pcollectID向某个收藏夹中添加产品ID
 	 */
-	public void insert(Long pcollectID,Long productID) {
+	public int insert(Long pcollectID,Long productID) {
 		Connection connection=null;
 		PreparedStatement pStatement=null;
+		
+		int rows = 0;
+		
 		try {
 			connection=getConnection();
 			String sql="insert into productcollectproduct values(?,?)";
 			pStatement=connection.prepareStatement(sql);
 			pStatement.setLong(1, pcollectID);
 			pStatement.setLong(2, productID);
-			int rows=pStatement.executeUpdate();
+			rows=pStatement.executeUpdate();
 			if(rows>0) {
 				System.out.println("insert successfully!");
 			}
@@ -36,6 +39,8 @@ public class ProductCollectProductDAO extends DaoBase{
 		} finally {
 			release(connection, pStatement, null);
 		}
+		
+		return rows;
 	}
 	
 	/**
@@ -69,16 +74,18 @@ public class ProductCollectProductDAO extends DaoBase{
 	/**
 	 * 根据PcollectID删除收藏夹中的某个产品ID，即取消收藏
 	 */
-	public void deleteByPcollectID(Long pcollectID,Long productID) {
+	public int deleteByPcollectID(Long pcollectID,Long productID) {
 		Connection connection=null;
 		PreparedStatement pStatement=null;	
+		
+		int rows = 0;
 		try {
 			connection=getConnection();
 			String sql="delete from productcollectproduct where pcollectID=? and productID=?";
 			pStatement=connection.prepareStatement(sql);
 			pStatement.setLong(1, pcollectID);
 			pStatement.setLong(2, productID);
-			int rows=pStatement.executeUpdate();
+			rows=pStatement.executeUpdate();
 			if(rows>0) {
 				System.out.println("delete successfully!");
 			}
@@ -90,23 +97,26 @@ public class ProductCollectProductDAO extends DaoBase{
 		} finally {
 			release(connection, pStatement, null);
 		}
+		
+		return rows;
 	}
 	
 	@Test
 	public void test() {
 		//测试insert
-		ProductCollectProduct pcProduct=new ProductCollectProduct();
-		pcProduct.setPcollectID((long)10);
-		pcProduct.setProductID((long)3);
-		insert(pcProduct.getPcollectID(), pcProduct.getProductID());
+		/*ProductCollectProduct pcProduct=new ProductCollectProduct();
+		pcProduct.setPcollectID((long)12);
+		pcProduct.setProductID((long)16);*/
+		// insert(pcProduct.getPcollectID(), pcProduct.getProductID());
 		
 		//测试searchByPcollectID
-		Long pcollectID2=(long)2;
-		searchByPcollectID(pcollectID2);
+		/*Long pcollectID2=(long)10;
+		searchByPcollectID(pcollectID2);*/
 		
 		//测试deleteByPcollectID
-		pcProduct.setPcollectID((long)10);
-		pcProduct.setProductID((long)3);
+		ProductCollectProduct pcProduct=new ProductCollectProduct();
+		pcProduct.setPcollectID((long)12);
+		pcProduct.setProductID((long)17);
 		deleteByPcollectID(pcProduct.getPcollectID(), pcProduct.getProductID());
 	}
 	

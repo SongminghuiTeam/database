@@ -5,13 +5,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.mysql.cj.result.Row;
+
 import domain.Shoppingcart;
 
 public class ShoppingcartDAO extends DaoBase {
 	//增
-	public void insert(Shoppingcart shoppingcart) {
+	public int insert(Shoppingcart shoppingcart) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;		
+		
+		int row = 0;
 		
 		try {
 			conn = this.getConnection();
@@ -19,7 +23,8 @@ public class ShoppingcartDAO extends DaoBase {
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, shoppingcart.getUserID());
 			
-			if(pstmt.executeUpdate() > 0) {
+			row = pstmt.executeUpdate();
+			if(row > 0) {
 				System.out.println("Insert successfully");
 			}
 			else {
@@ -32,12 +37,16 @@ public class ShoppingcartDAO extends DaoBase {
 		}finally {
 			this.release(conn, pstmt, null);
 		}
+		
+		return row;
 	}
 	
 	//删
-	public void delete(Long shoppingcartID) {
+	public int delete(Long shoppingcartID) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
+		
+		int row = 0;
 		
 		try {
 			conn = this.getConnection();
@@ -45,21 +54,30 @@ public class ShoppingcartDAO extends DaoBase {
 			String sql = "delete from shoppingcart where shoppingcartID = ?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setLong(1, shoppingcartID);
-			pstmt.executeUpdate();
+			row = pstmt.executeUpdate();
 			
-			System.out.println("Delete successfully");
+			if(row > 0) {
+				System.out.println("Delete successfully");
+			}
+			else {
+				System.out.println("Delete error");
+			}
 			
 		}catch(SQLException e) {
 			e.printStackTrace();
 		}finally {
 			this.release(conn, pstmt, null);
 		}
+		
+		return row;
 	}
 	
 	//改userID
-	public void updateUserID(Long shoppingcartID, String newUserID) {
+	public int updateUserID(Long shoppingcartID, String newUserID) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;	
+		
+		int row = 0;
 		
 		try {
 			conn = this.getConnection();
@@ -68,7 +86,9 @@ public class ShoppingcartDAO extends DaoBase {
 			pstmt.setString(1, newUserID);
 			pstmt.setLong(2, shoppingcartID);
 			
-			if(pstmt.executeUpdate() > 0) {
+			row = pstmt.executeUpdate();
+			
+			if(row > 0) {
 				System.out.println("Update successfully");
 			}
 			else {
@@ -80,6 +100,8 @@ public class ShoppingcartDAO extends DaoBase {
 		}finally {
 			this.release(conn, pstmt, null);
 		}
+		
+		return row;
 	}
 	
 	//根据userID查询shoppingcartID
@@ -111,16 +133,14 @@ public class ShoppingcartDAO extends DaoBase {
 	@org.junit.Test
 	public void Test() {
 		
-		Shoppingcart s1 = new Shoppingcart();
-		s1.setUserID("chenwanjing");
-		insert(s1);
+		/*Shoppingcart s1 = new Shoppingcart();
+		s1.setUserID("cwj");
+		insert(s1);*/
 		
-		Shoppingcart s2 = new Shoppingcart();
-		s2.setUserID("heyulin");
-		insert(s2);
+		// delete(queryShoppingcartID("liangxiaoke"));
 		
-		delete(queryShoppingcartID("chenwanjing"));
+		// updateUserID(queryShoppingcartID("chenwanjing"), "heyulin");
 		
-		updateUserID(queryShoppingcartID("heyulin"), "liangxiaoke");
+		System.out.println(queryShoppingcartID("heyulin"));
 	}
 }

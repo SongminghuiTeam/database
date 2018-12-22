@@ -13,10 +13,12 @@ import org.junit.Test;
 import domain.ShoppingcartProduct;
 
 public class ShoppingcartProductDAO extends DaoBase{
-	public void insert(ShoppingcartProduct shoppingcartProduct) {
+	public int insert(ShoppingcartProduct shoppingcartProduct) {
 		Connection conn = null;
 		PreparedStatement pStatement = null;
 		ResultSet rs = null;
+		
+		int row = 0;
 
 		try {
 			conn = getConnection();
@@ -25,7 +27,7 @@ public class ShoppingcartProductDAO extends DaoBase{
 			pStatement.setLong(1, shoppingcartProduct.getShoppingcartID());
 			pStatement.setLong(2, shoppingcartProduct.getProductID());
 			
-			int row =  pStatement.executeUpdate();
+			row =  pStatement.executeUpdate();
 			
 			if(row > 0) {
 				System.out.println("insert successfully");
@@ -45,6 +47,8 @@ public class ShoppingcartProductDAO extends DaoBase{
 				e.printStackTrace();
 			}
 		}
+		
+		return row;
 	}
 	
 	public ArrayList<Long> search(Long shoppingcartID){
@@ -108,13 +112,10 @@ public class ShoppingcartProductDAO extends DaoBase{
 	
 	@Test
 	public void Test() {
-		//ShoppingcartProduct shoppingcartProduct1 = new ShoppingcartProduct((long)2, (long)7);
-		ShoppingcartProduct shoppingcartProduct2 = new ShoppingcartProduct((long)4, (long)5);
+		/*ShoppingcartProduct shoppingcartProduct1 = new ShoppingcartProduct((long)8, (long)16);
+		insert(shoppingcartProduct1);*/
 		
-		//insert(shoppingcartProduct1);
-		//insert(shoppingcartProduct2);
-		
-		ArrayList<Long> productIDs = search((long)1);
+		/*ArrayList<Long> productIDs = search((long)1);
 		if(productIDs.size() == 0) {
 			System.out.println("no matched record!");
 		}
@@ -122,8 +123,8 @@ public class ShoppingcartProductDAO extends DaoBase{
 			for(int i = 0;i < productIDs.size();i++) {
 				System.out.println("productID:" + productIDs.get(i));
 			}
-		}
+		}*/
 		
-		delete((long)1);
+		delete((long)6);
 	}
 }

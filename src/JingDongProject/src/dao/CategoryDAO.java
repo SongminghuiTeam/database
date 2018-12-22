@@ -9,9 +9,11 @@ import domain.Category;
 public class CategoryDAO extends DaoBase{
 	
 	//增
-	public void insert(Category category) {
+	public int insert(Category category) {
 		Connection conn = null;
-		PreparedStatement pstmt = null;		
+		PreparedStatement pstmt = null;	
+		
+		int row = 0;
 
 		try {
 			conn =  this.getConnection();
@@ -28,7 +30,8 @@ public class CategoryDAO extends DaoBase{
 				pstmt.setLong(2, category.getParentID());
 			}
 			
-			if(pstmt.executeUpdate() > 0) {
+			row = pstmt.executeUpdate();
+			if(row > 0) {
 				System.out.println("Insert successfully");
 			}
 			else {
@@ -40,12 +43,16 @@ public class CategoryDAO extends DaoBase{
 		}finally {
 			this.release(conn, pstmt, null);
 		}
+		
+		return row;
 	}
 	
 	//删
-	public void delete(Long categoryID) {
+	public int delete(Long categoryID) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
+		
+		int row = 0;
 		
 		try {
 			conn = this.getConnection();
@@ -53,21 +60,30 @@ public class CategoryDAO extends DaoBase{
 			String sql = "delete from category where categoryID = ?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setLong(1, categoryID);
-			pstmt.executeUpdate();
+			row = pstmt.executeUpdate();
 			
-			System.out.println("Delete successfully");
+			if(row > 0) {
+				System.out.println("Delete successfully");
+			}
+			else {
+				System.out.println("Delete error");
+			}
 			
 		}catch(SQLException e) {
 			e.printStackTrace();
 		}finally {
 			this.release(conn, pstmt, null);
 		}
+		
+		return row;
 	}
 	
 	//改categoryName
-	public void updateCategoryName(Long categoryID, String newCategoryName) {
+	public int updateCategoryName(Long categoryID, String newCategoryName) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;	
+		
+		int row = 0;
 		
 		try {
 			conn = this.getConnection();
@@ -76,7 +92,8 @@ public class CategoryDAO extends DaoBase{
 			pstmt.setString(1, newCategoryName);
 			pstmt.setLong(2, categoryID);
 			
-			if(pstmt.executeUpdate() > 0) {
+			row = pstmt.executeUpdate();
+			if(row > 0) {
 				System.out.println("Update successfully");
 			}
 			else {
@@ -88,12 +105,16 @@ public class CategoryDAO extends DaoBase{
 		}finally {
 			this.release(conn, pstmt, null);
 		}
+		
+		return row;
 	}
 	
 	//改parentID
-	public void updateParentID(Long categoryID, Long newParentID) {
+	public int updateParentID(Long categoryID, Long newParentID) {
 		Connection conn = null;
 		PreparedStatement pstmt = null;	
+		
+		int row = 0;
 		
 		try {
 			conn = this.getConnection();
@@ -102,7 +123,9 @@ public class CategoryDAO extends DaoBase{
 			pstmt.setLong(1, newParentID);
 			pstmt.setLong(2, categoryID);
 			
-			if(pstmt.executeUpdate() > 0) {
+			row = pstmt.executeUpdate();
+			
+			if(row > 0) {
 				System.out.println("Update successfully");
 			}
 			else {
@@ -114,6 +137,8 @@ public class CategoryDAO extends DaoBase{
 		}finally {
 			this.release(conn, pstmt, null);
 		}
+		
+		return row;
 	}
 	
 		
@@ -174,13 +199,23 @@ public class CategoryDAO extends DaoBase{
 	@org.junit.Test
 	public void Test() {
 		
-		Category c1= new Category();
-		c1.setCategoryName("家用电器");
-		insert(c1);
+		/*Category c1= new Category();
+		c1.setCategoryName("家庭电器");
+		insert(c1);*/
 		
-		updateCategoryName(queryCategoryID("家用电器"), "家电");
+		/*Category c4 = new Category();
+		c4.setCategoryName("冰箱");
+		c4.setParentID(queryCategoryID("家庭电器"));
+		insert(c4);*/
 		
-		Category c2= new Category();
+		/*Category c4 = new Category();
+		c4.setCategoryName("电视");
+		c4.setParentID((long)1);
+		insert(c4);*/
+		
+		// updateCategoryName(queryCategoryID("家电"), "服饰");
+		
+		/*Category c2= new Category();
 		c2.setCategoryName("数码");
 		insert(c2);		
 
@@ -192,11 +227,13 @@ public class CategoryDAO extends DaoBase{
 		Category c4 = new Category();
 		c4.setCategoryName("冰箱");
 		c4.setParentID(queryCategoryID("家电"));
-		insert(c4);
+		insert(c4);*/
 		
-		updateParentID(queryCategoryID("电视机"),queryCategoryID("家电"));
+		// updateParentID(queryCategoryID("电子产品"),queryCategoryID("服饰"));
 		
-		delete(queryCategoryID("冰箱"));
+		// delete(queryCategoryID("电子产品"));
+		
+		System.out.println(queryParentID("电子产品"));
 
 	}
 }

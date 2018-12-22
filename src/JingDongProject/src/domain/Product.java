@@ -26,9 +26,35 @@ public class Product {
 		this.storeID = storeID;
 	}
 	
+	public Product(String productName, String model, String description, Long categoryID, Long jdBean, Float price, Long storeID) {
+		this.productName = productName;
+		this.weight = (float)0.0;
+		this.visitVolume = (long)0;
+		this.model = model;
+		this.description = description;
+		this.categoryID = categoryID;
+		this.jdBean = jdBean;
+		this.status = true;
+		this.price = price;
+		this.storeID = storeID;
+	}
+	
 	public Product(String productName, Float weight, String model, String description, Long categoryID, Float price,Long storeID) {
 		this.productName = productName;
 		this.weight = weight;
+		this.visitVolume = (long)0;
+		this.model = model;
+		this.description = description;
+		this.categoryID = categoryID;
+		this.jdBean = (long)0;
+		this.status = true;
+		this.price = price;
+		this.storeID = storeID;
+	}
+	
+	public Product(String productName, String model, String description, Long categoryID, Float price,Long storeID) {
+		this.productName = productName;
+		this.weight = (float)0.0;
 		this.visitVolume = (long)0;
 		this.model = model;
 		this.description = description;

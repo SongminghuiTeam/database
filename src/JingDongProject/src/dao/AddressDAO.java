@@ -17,9 +17,12 @@ public class AddressDAO extends DaoBase{
 	 * 插入一条地址记录
 	 * @param address
 	 */
-	public void insert(Address address){
+	public int insert(Address address){
 		Connection connection=null;
 		PreparedStatement pStatement=null;	
+		
+		int rows = 0;
+		
 		try {
 			connection=getConnection();
 			String sql="insert into address(userID,province,city,block,street,address,receiver,phone) values(?,?,?,?,?,?,?,?)";
@@ -33,7 +36,7 @@ public class AddressDAO extends DaoBase{
 			pStatement.setString(7, address.getReceiver());
 			pStatement.setString(8, address.getPhone());
 			
-			int rows = pStatement.executeUpdate();
+			rows = pStatement.executeUpdate();
 			if(rows>0) {
 				System.out.println("insert successfully!");
 			}
@@ -41,10 +44,12 @@ public class AddressDAO extends DaoBase{
 				System.out.println("insert defeat!");
 			}
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			e.printStackTrace();;
 		} finally {
 			release(connection, pStatement, null);
 		}
+		
+		return rows;
 	}
 	
 	/**
@@ -151,9 +156,11 @@ public class AddressDAO extends DaoBase{
 	 * 根据传过来的address修改该条地址记录
 	 * @param addressOld
 	 */
-	public void updateAddress(Address address) {
+	public int updateAddress(Address address) {
 		Connection connection=null;
 		PreparedStatement pStatement=null;	
+		
+		int rows = 0;
 		
 		try {
 			connection=getConnection();
@@ -171,7 +178,7 @@ public class AddressDAO extends DaoBase{
 			pStatement.setString(8, address.getUserID());
 			pStatement.setLong(9, address.getAddressID());
 			
-			int rows = pStatement.executeUpdate();
+			rows = pStatement.executeUpdate();
 			if(rows>0) {
 				System.out.println("update successfully!");
 			}
@@ -183,6 +190,8 @@ public class AddressDAO extends DaoBase{
 		} finally {
 			release(connection, pStatement, null);
 		}
+		
+		return rows;
 	}
 	
 	/**
@@ -190,16 +199,19 @@ public class AddressDAO extends DaoBase{
 	 * @param userID
 	 * @param addressID
 	 */
-	public void deleteAddress(String userID,Long addressID) {
+	public int deleteAddress(String userID,Long addressID) {
 		Connection connection=null;
-		PreparedStatement pStatement=null;		
+		PreparedStatement pStatement=null;
+		
+		int rows = 0;
+		
 		try {
 			connection=getConnection();
 			String sql="delete from address where userID=? and addressID=?";
 			pStatement=connection.prepareStatement(sql);
 			pStatement.setString(1, userID);
 			pStatement.setLong(2, addressID);
-			int rows=pStatement.executeUpdate();		
+			rows=pStatement.executeUpdate();		
 			if(rows>0) {
 				System.out.println("delete successfully!");	
 			}
@@ -211,6 +223,8 @@ public class AddressDAO extends DaoBase{
 		} finally {
 			release(connection, pStatement, null);
 		}
+		
+		return rows;
 	}
 	
 	
@@ -249,7 +263,7 @@ public class AddressDAO extends DaoBase{
 			
 		//测试insert
 		/*Address address=new Address();
-		address.setUserID("hyl");
+		address.setUserID("songminghui");
 		address.setProvince("北京");
 		address.setCity("北京");
 		address.setBlock("海淀");
@@ -260,28 +274,28 @@ public class AddressDAO extends DaoBase{
 		insert(address);*/
 		
 		//测试searchAddressesByUserID
-		String userID="hyl";
-		searchAddressesByUserID(userID);
+		/*String userID="liangxiaoke";
+		searchAddressesByUserID(userID);*/
 		
 		//测试searchOneAddress
-		/*Long addressID=(long)4;
-		String userID="lxk";
+		/*Long addressID=(long)12;
+		String userID="chenwanjing";
 		searchOneAddress(userID, addressID);*/
 		
 		//测试updateAddress
-		/*Address address2=searchOneAddress("hyl", (long)8);
-		address2.setProvince("北京");
+		/*Address address2=searchOneAddress("heyulin", (long)10);
+		address2.setProvince("广东");
 		address2.setCity("海淀");
 		updateAddress(address2);
 		System.out.println("after update:");
-		searchOneAddress("hyl", (long)8);*/
+		searchOneAddress("heyulin", (long)9);*/
 		
 		//测试deleteByUserID
-		/*String userID="hyl";
-		Long addressID=(long)8;
+		/*String userID="heyulin";
+		Long addressID=(long)11;
 		deleteAddress(userID, addressID);*/
 		
 		//测试searchUserIDByAddressID
-		/*System.out.println(searchUserIDByAddressID((long)4));*/
+		System.out.println(searchUserIDByAddressID((long)9));
 	}
 }
